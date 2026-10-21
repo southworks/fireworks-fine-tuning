@@ -1,0 +1,729 @@
+{
+  "dataset": "combined-industrial-and-scientific-sft",
+  "total_examples": 1822,
+  "unique_products": 1822,
+  "source_counts": {
+    "gpt4o_first50": 50,
+    "gpt6_buy_training_products_1259_1358": 100,
+    "gpt6_buy_training_products_1359_1458": 100,
+    "gpt6_buy_training_products_1459_1508": 50,
+    "gpt6_buy_training_products_1509_1558": 50,
+    "gpt6_eval_products_1101_1170": 70,
+    "gpt6_eval_products_1171_1178": 8,
+    "gpt6_next200": 200,
+    "gpt6_next50": 50,
+    "gpt6_products_0301_0400": 100,
+    "gpt6_products_0401_0500": 100,
+    "gpt6_products_0501_0600": 100,
+    "gpt6_products_0601_0700": 100,
+    "gpt6_products_0701_0800": 100,
+    "gpt6_products_0801_0900": 100,
+    "gpt6_products_0901_1000": 100,
+    "gpt6_products_1001_1100": 100,
+    "gpt6_products_1179_1258": 80,
+    "gpt6_routed_products_1559_1658": 100,
+    "gpt6_routed_products_1659_1758": 100,
+    "gpt6_routed_products_1759_1822": 64
+  },
+  "statuses": {
+    "pending_human_review": 546,
+    "rejected": 56,
+    "approved": 1220
+  },
+  "actual_results": {
+    "DO_NOT_BUY": 725,
+    "CONDITIONAL_BUY": 501,
+    "BUY": 176,
+    "INSUFFICIENT_EVIDENCE": 420
+  },
+  "split_results": {
+    "train": {
+      "BUY": 102,
+      "DO_NOT_BUY": 300,
+      "INSUFFICIENT_EVIDENCE": 191,
+      "CONDITIONAL_BUY": 204
+    },
+    "evaluation": {
+      "DO_NOT_BUY": 51,
+      "INSUFFICIENT_EVIDENCE": 24,
+      "CONDITIONAL_BUY": 24,
+      "BUY": 19
+    },
+    "backup": {
+      "DO_NOT_BUY": 246,
+      "INSUFFICIENT_EVIDENCE": 118,
+      "CONDITIONAL_BUY": 106,
+      "BUY": 13
+    }
+  },
+  "assistant_models": {
+    "gpt-4o": 50,
+    "gpt-6-sol": 1772
+  },
+  "training_examples": 797,
+  "evaluation_examples": 118,
+  "backup_examples": 483,
+  "files": {
+    "master": "examples_master.jsonl",
+    "training": "training.jsonl",
+    "evaluation": "evaluation.jsonl",
+    "backup": "backup.jsonl",
+    "pending": "pending_human_review.jsonl",
+    "rejected": "rejected.jsonl"
+  },
+  "generation_batches": [
+    {
+      "batch": "gpt6_products_0301_0400",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 100,
+      "batch_size": 4,
+      "product_offset": 300,
+      "model_invocations": {
+        "triage_and_user": 25,
+        "assistant": 25,
+        "judge": 25,
+        "total": 75
+      },
+      "timings": {
+        "triage_and_user_seconds": 112.67,
+        "assistant_seconds": 173.95,
+        "judge_seconds": 312.84,
+        "total_seconds": 601.66
+      },
+      "selected_results": {
+        "DO_NOT_BUY": 11,
+        "BUY": 17,
+        "CONDITIONAL_BUY": 53,
+        "INSUFFICIENT_EVIDENCE": 19
+      },
+      "actual_results": {
+        "DO_NOT_BUY": 32,
+        "CONDITIONAL_BUY": 25,
+        "INSUFFICIENT_EVIDENCE": 30,
+        "BUY": 13
+      },
+      "statuses": {
+        "pending_human_review": 29,
+        "approved": 64,
+        "rejected": 7
+      }
+    },
+    {
+      "batch": "gpt6_products_0401_0500",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 100,
+      "batch_size": 4,
+      "product_offset": 400,
+      "model_invocations": {
+        "triage_and_user": 25,
+        "assistant": 25,
+        "judge": 25,
+        "total": 75
+      },
+      "timings": {
+        "triage_and_user_seconds": 103.0,
+        "assistant_seconds": 156.69,
+        "judge_seconds": 153.2,
+        "total_seconds": 415.03
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 52,
+        "BUY": 21,
+        "INSUFFICIENT_EVIDENCE": 17,
+        "DO_NOT_BUY": 10
+      },
+      "actual_results": {
+        "INSUFFICIENT_EVIDENCE": 20,
+        "CONDITIONAL_BUY": 34,
+        "DO_NOT_BUY": 35,
+        "BUY": 11
+      },
+      "statuses": {
+        "approved": 61,
+        "pending_human_review": 35,
+        "rejected": 4
+      }
+    },
+    {
+      "batch": "gpt6_products_0501_0600",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 100,
+      "batch_size": 4,
+      "product_offset": 500,
+      "model_invocations": {
+        "triage_and_user": 25,
+        "assistant": 25,
+        "judge": 25,
+        "total": 75
+      },
+      "timings": {
+        "triage_and_user_seconds": 102.05,
+        "assistant_seconds": 167.55,
+        "judge_seconds": 188.62,
+        "total_seconds": 460.32
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 59,
+        "DO_NOT_BUY": 16,
+        "INSUFFICIENT_EVIDENCE": 12,
+        "BUY": 13
+      },
+      "actual_results": {
+        "CONDITIONAL_BUY": 28,
+        "DO_NOT_BUY": 44,
+        "INSUFFICIENT_EVIDENCE": 24,
+        "BUY": 4
+      },
+      "statuses": {
+        "pending_human_review": 29,
+        "approved": 68,
+        "rejected": 3
+      }
+    },
+    {
+      "batch": "gpt6_products_0601_0700",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 100,
+      "batch_size": 4,
+      "product_offset": 600,
+      "model_invocations": {
+        "triage_and_user": 25,
+        "assistant": 25,
+        "judge": 25,
+        "total": 75
+      },
+      "timings": {
+        "triage_and_user_seconds": 105.99,
+        "assistant_seconds": 312.45,
+        "judge_seconds": 170.38,
+        "total_seconds": 590.98
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 59,
+        "BUY": 21,
+        "INSUFFICIENT_EVIDENCE": 13,
+        "DO_NOT_BUY": 7
+      },
+      "actual_results": {
+        "INSUFFICIENT_EVIDENCE": 23,
+        "DO_NOT_BUY": 34,
+        "BUY": 9,
+        "CONDITIONAL_BUY": 34
+      },
+      "statuses": {
+        "approved": 68,
+        "pending_human_review": 29,
+        "rejected": 3
+      }
+    },
+    {
+      "batch": "gpt6_products_0701_0800",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 100,
+      "batch_size": 4,
+      "product_offset": 700,
+      "model_invocations": {
+        "triage_and_user": 25,
+        "assistant": 25,
+        "judge": 25,
+        "total": 75
+      },
+      "timings": {
+        "triage_and_user_seconds": 492.54,
+        "assistant_seconds": 167.14,
+        "judge_seconds": 167.8,
+        "total_seconds": 829.63
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 61,
+        "INSUFFICIENT_EVIDENCE": 12,
+        "DO_NOT_BUY": 12,
+        "BUY": 15
+      },
+      "actual_results": {
+        "CONDITIONAL_BUY": 25,
+        "DO_NOT_BUY": 39,
+        "INSUFFICIENT_EVIDENCE": 26,
+        "BUY": 10
+      },
+      "statuses": {
+        "approved": 62,
+        "pending_human_review": 34,
+        "rejected": 4
+      }
+    },
+    {
+      "batch": "gpt6_products_0801_0900",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 100,
+      "batch_size": 4,
+      "product_offset": 800,
+      "model_invocations": {
+        "triage_and_user": 25,
+        "assistant": 25,
+        "judge": 25,
+        "total": 75
+      },
+      "timings": {
+        "triage_and_user_seconds": 342.59,
+        "assistant_seconds": 298.07,
+        "judge_seconds": 305.55,
+        "total_seconds": 948.33
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 61,
+        "BUY": 16,
+        "INSUFFICIENT_EVIDENCE": 16,
+        "DO_NOT_BUY": 7
+      },
+      "actual_results": {
+        "DO_NOT_BUY": 40,
+        "INSUFFICIENT_EVIDENCE": 27,
+        "BUY": 11,
+        "CONDITIONAL_BUY": 22
+      },
+      "statuses": {
+        "approved": 66,
+        "pending_human_review": 33,
+        "rejected": 1
+      }
+    },
+    {
+      "batch": "gpt6_products_0901_1000",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 100,
+      "batch_size": 4,
+      "product_offset": 900,
+      "model_invocations": {
+        "triage_and_user": 25,
+        "assistant": 25,
+        "judge": 25,
+        "total": 75
+      },
+      "timings": {
+        "triage_and_user_seconds": 129.36,
+        "assistant_seconds": 194.18,
+        "judge_seconds": 310.92,
+        "total_seconds": 636.89
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 54,
+        "INSUFFICIENT_EVIDENCE": 19,
+        "BUY": 13,
+        "DO_NOT_BUY": 14
+      },
+      "actual_results": {
+        "DO_NOT_BUY": 33,
+        "INSUFFICIENT_EVIDENCE": 34,
+        "CONDITIONAL_BUY": 25,
+        "BUY": 8
+      },
+      "statuses": {
+        "pending_human_review": 24,
+        "approved": 70,
+        "rejected": 6
+      }
+    },
+    {
+      "batch": "gpt6_products_1001_1100",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 100,
+      "batch_size": 4,
+      "product_offset": 1000,
+      "model_invocations": {
+        "triage_and_user": 25,
+        "assistant": 25,
+        "judge": 25,
+        "total": 75
+      },
+      "timings": {
+        "triage_and_user_seconds": 124.85,
+        "assistant_seconds": 141.27,
+        "judge_seconds": 321.06,
+        "total_seconds": 589.34
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 57,
+        "BUY": 13,
+        "DO_NOT_BUY": 12,
+        "INSUFFICIENT_EVIDENCE": 18
+      },
+      "actual_results": {
+        "DO_NOT_BUY": 38,
+        "BUY": 9,
+        "INSUFFICIENT_EVIDENCE": 28,
+        "CONDITIONAL_BUY": 25
+      },
+      "statuses": {
+        "approved": 74,
+        "pending_human_review": 23,
+        "rejected": 3
+      }
+    },
+    {
+      "batch": "gpt6_eval_products_1101_1170",
+      "destination": "evaluation",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 70,
+      "batch_size": 4,
+      "product_offset": 1100,
+      "model_invocations": {
+        "triage_and_user": 18,
+        "assistant": 18,
+        "judge": 18,
+        "total": 54
+      },
+      "timings": {
+        "triage_and_user_seconds": 80.54,
+        "assistant_seconds": 305.33,
+        "judge_seconds": 290.15,
+        "total_seconds": 678.09
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 37,
+        "INSUFFICIENT_EVIDENCE": 7,
+        "DO_NOT_BUY": 9,
+        "BUY": 17
+      },
+      "actual_results": {
+        "DO_NOT_BUY": 25,
+        "INSUFFICIENT_EVIDENCE": 11,
+        "CONDITIONAL_BUY": 27,
+        "BUY": 7
+      },
+      "statuses": {
+        "approved": 46,
+        "pending_human_review": 20,
+        "rejected": 4
+      }
+    },
+    {
+      "batch": "gpt6_eval_products_1171_1178",
+      "destination": "evaluation",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 8,
+      "batch_size": 4,
+      "product_offset": 1170,
+      "model_invocations": {
+        "triage_and_user": 2,
+        "assistant": 2,
+        "judge": 2,
+        "total": 6
+      },
+      "timings": {
+        "triage_and_user_seconds": 14.27,
+        "assistant_seconds": 19.51,
+        "judge_seconds": 18.82,
+        "total_seconds": 54.61
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 5,
+        "INSUFFICIENT_EVIDENCE": 3
+      },
+      "actual_results": {
+        "DO_NOT_BUY": 4,
+        "INSUFFICIENT_EVIDENCE": 3,
+        "CONDITIONAL_BUY": 1
+      },
+      "statuses": {
+        "approved": 5,
+        "pending_human_review": 3
+      }
+    },
+    {
+      "batch": "gpt6_products_1179_1258",
+      "destination": "evaluation",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 80,
+      "batch_size": 4,
+      "product_offset": 1178,
+      "model_invocations": {
+        "triage_and_user": 20,
+        "assistant": 20,
+        "judge": 20,
+        "total": 60
+      },
+      "timings": {
+        "triage_and_user_seconds": 89.65,
+        "assistant_seconds": 125.33,
+        "judge_seconds": 114.19,
+        "total_seconds": 331.33
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 44,
+        "BUY": 18,
+        "INSUFFICIENT_EVIDENCE": 8,
+        "DO_NOT_BUY": 10
+      },
+      "actual_results": {
+        "DO_NOT_BUY": 36,
+        "CONDITIONAL_BUY": 19,
+        "BUY": 6,
+        "INSUFFICIENT_EVIDENCE": 19
+      },
+      "statuses": {
+        "approved": 52,
+        "pending_human_review": 28
+      }
+    },
+    {
+      "batch": "gpt6_buy_training_products_1259_1358",
+      "destination": "BUY-approved-to-training; remainder-to-backup",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 100,
+      "batch_size": 4,
+      "product_offset": 1258,
+      "model_invocations": {
+        "triage_and_user": 25,
+        "assistant": 25,
+        "judge": 25,
+        "total": 75
+      },
+      "timings": {
+        "triage_and_user_seconds": 111.1,
+        "assistant_seconds": 291.13,
+        "judge_seconds": 196.01,
+        "total_seconds": 600.47
+      },
+      "selected_results": {
+        "DO_NOT_BUY": 11,
+        "CONDITIONAL_BUY": 60,
+        "BUY": 16,
+        "INSUFFICIENT_EVIDENCE": 13
+      },
+      "actual_results": {
+        "DO_NOT_BUY": 36,
+        "INSUFFICIENT_EVIDENCE": 27,
+        "CONDITIONAL_BUY": 28,
+        "BUY": 9
+      },
+      "statuses": {
+        "approved": 65,
+        "pending_human_review": 33,
+        "rejected": 2
+      }
+    },
+    {
+      "batch": "gpt6_buy_training_products_1359_1458",
+      "destination": "BUY-approved-to-training; remainder-to-backup",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 100,
+      "batch_size": 4,
+      "product_offset": 1358,
+      "model_invocations": {
+        "triage_and_user": 25,
+        "assistant": 25,
+        "judge": 25,
+        "total": 75
+      },
+      "timings": {
+        "triage_and_user_seconds": 109.35,
+        "assistant_seconds": 138.25,
+        "judge_seconds": 291.75,
+        "total_seconds": 541.62
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 60,
+        "BUY": 16,
+        "DO_NOT_BUY": 11,
+        "INSUFFICIENT_EVIDENCE": 13
+      },
+      "actual_results": {
+        "CONDITIONAL_BUY": 17,
+        "DO_NOT_BUY": 49,
+        "INSUFFICIENT_EVIDENCE": 25,
+        "BUY": 9
+      },
+      "statuses": {
+        "approved": 64,
+        "pending_human_review": 31,
+        "rejected": 5
+      }
+    },
+    {
+      "batch": "gpt6_buy_training_products_1459_1508",
+      "destination": "BUY-approved-to-training; remainder-to-backup",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 50,
+      "batch_size": 4,
+      "product_offset": 1458,
+      "model_invocations": {
+        "triage_and_user": 13,
+        "assistant": 13,
+        "judge": 13,
+        "total": 39
+      },
+      "timings": {
+        "triage_and_user_seconds": 49.73,
+        "assistant_seconds": 64.55,
+        "judge_seconds": 74.45,
+        "total_seconds": 190.82
+      },
+      "selected_results": {
+        "DO_NOT_BUY": 8,
+        "CONDITIONAL_BUY": 26,
+        "BUY": 10,
+        "INSUFFICIENT_EVIDENCE": 6
+      },
+      "actual_results": {
+        "DO_NOT_BUY": 26,
+        "INSUFFICIENT_EVIDENCE": 9,
+        "CONDITIONAL_BUY": 11,
+        "BUY": 4
+      },
+      "statuses": {
+        "approved": 34,
+        "rejected": 1,
+        "pending_human_review": 15
+      }
+    },
+    {
+      "batch": "gpt6_buy_training_products_1509_1558",
+      "destination": "BUY-approved-to-training; remainder-to-backup",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 50,
+      "batch_size": 4,
+      "product_offset": 1508,
+      "model_invocations": {
+        "triage_and_user": 13,
+        "assistant": 13,
+        "judge": 13,
+        "total": 39
+      },
+      "timings": {
+        "triage_and_user_seconds": 58.55,
+        "assistant_seconds": 56.29,
+        "judge_seconds": 83.41,
+        "total_seconds": 200.34
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 26,
+        "INSUFFICIENT_EVIDENCE": 10,
+        "DO_NOT_BUY": 7,
+        "BUY": 7
+      },
+      "actual_results": {
+        "CONDITIONAL_BUY": 13,
+        "DO_NOT_BUY": 26,
+        "INSUFFICIENT_EVIDENCE": 6,
+        "BUY": 5
+      },
+      "statuses": {
+        "pending_human_review": 16,
+        "approved": 33,
+        "rejected": 1
+      }
+    },
+    {
+      "batch": "gpt6_routed_products_1559_1658",
+      "destination": "approved BUY to evaluation; approved CONDITIONAL_BUY to training; remainder to backup",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 100,
+      "batch_size": 4,
+      "product_offset": 1558,
+      "model_invocations": {
+        "triage_and_user": 25,
+        "assistant": 25,
+        "judge": 25,
+        "total": 75
+      },
+      "timings": {
+        "triage_and_user_seconds": 110.6,
+        "assistant_seconds": 138.13,
+        "judge_seconds": 346.12,
+        "total_seconds": 597.0
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 57,
+        "BUY": 20,
+        "INSUFFICIENT_EVIDENCE": 14,
+        "DO_NOT_BUY": 9
+      },
+      "actual_results": {
+        "INSUFFICIENT_EVIDENCE": 19,
+        "DO_NOT_BUY": 44,
+        "BUY": 9,
+        "CONDITIONAL_BUY": 28
+      },
+      "statuses": {
+        "approved": 74,
+        "pending_human_review": 22,
+        "rejected": 4
+      }
+    },
+    {
+      "batch": "gpt6_routed_products_1659_1758",
+      "destination": "approved BUY to evaluation; approved CONDITIONAL_BUY to training; remainder to backup",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 100,
+      "batch_size": 4,
+      "product_offset": 1658,
+      "model_invocations": {
+        "triage_and_user": 25,
+        "assistant": 25,
+        "judge": 25,
+        "total": 75
+      },
+      "timings": {
+        "triage_and_user_seconds": 117.98,
+        "assistant_seconds": 216.79,
+        "judge_seconds": 347.31,
+        "total_seconds": 684.3
+      },
+      "selected_results": {
+        "INSUFFICIENT_EVIDENCE": 13,
+        "BUY": 22,
+        "CONDITIONAL_BUY": 51,
+        "DO_NOT_BUY": 14
+      },
+      "actual_results": {
+        "DO_NOT_BUY": 39,
+        "BUY": 7,
+        "CONDITIONAL_BUY": 33,
+        "INSUFFICIENT_EVIDENCE": 21
+      },
+      "statuses": {
+        "pending_human_review": 25,
+        "approved": 72,
+        "rejected": 3
+      }
+    },
+    {
+      "batch": "gpt6_routed_products_1759_1822",
+      "destination": "approved BUY to evaluation; approved CONDITIONAL_BUY to training; remainder to backup",
+      "pipeline_version": "single-pass-batched-v1",
+      "examples": 64,
+      "batch_size": 4,
+      "product_offset": 1758,
+      "model_invocations": {
+        "triage_and_user": 16,
+        "assistant": 16,
+        "judge": 16,
+        "total": 48
+      },
+      "timings": {
+        "triage_and_user_seconds": 84.4,
+        "assistant_seconds": 287.15,
+        "judge_seconds": 312.52,
+        "total_seconds": 686.49
+      },
+      "selected_results": {
+        "CONDITIONAL_BUY": 46,
+        "INSUFFICIENT_EVIDENCE": 11,
+        "BUY": 4,
+        "DO_NOT_BUY": 3
+      },
+      "actual_results": {
+        "DO_NOT_BUY": 26,
+        "CONDITIONAL_BUY": 23,
+        "INSUFFICIENT_EVIDENCE": 11,
+        "BUY": 4
+      },
+      "statuses": {
+        "approved": 44,
+        "pending_human_review": 19,
+        "rejected": 1
+      }
+    }
+  ]
+}
