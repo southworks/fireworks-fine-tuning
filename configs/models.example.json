@@ -1,6 +1,0 @@
-{
-  "qwen3_4b_base": "YOUR_BASE_DEPLOYMENT_ID",
-  "qwen3_4b_finetuned": "YOUR_FINETUNED_MODEL_OR_DEPLOYMENT_ID",
-  "gpt_4_1_mini": "gpt-4.1-mini",
-  "judge": "gpt-6-sol"
-}

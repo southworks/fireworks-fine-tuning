@@ -1,0 +1,10 @@
+# Qwen3-4B without fine-tuning, used as the baseline in the benchmarks.
+# Used by: make deploy-base-model  ->  scripts/deploy_model.py
+name                 = "qwen3-4b-base"                       # deployment ID
+strategy             = "dedicated"                           # one deployment serving one model
+model                = "accounts/fireworks/models/qwen3-4b"
+shape                = "default"                             # or a shape from: firectl deployment-shape-version list --base-model <model>
+min_replicas         = 0                                     # 0 = scale to zero when idle
+max_replicas         = 1
+scale_to_zero_window = "10m"                                 # idle time before scaling to zero (Fireworks default 1h)
+display_name         = "Qwen3-4B base (benchmark baseline)"

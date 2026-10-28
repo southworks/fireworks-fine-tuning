@@ -1,0 +1,74 @@
+{
+  "name": "accounts/fireworks/models/qwen3-4b",
+  "display_name": "Qwen3 4B",
+  "description": "Latest Qwen3 state of the art model, 4B model",
+  "create_time": "2025-04-28T23:50:29.787828Z",
+  "state": "READY",
+  "status": {
+    "code": "INTERNAL",
+    "message": "Internal error occurred, please contact the Fireworks AI team at https://discord.gg/fireworks-ai"
+  },
+  "kind": "HF_BASE_MODEL",
+  "hugging_face_url": "https://huggingface.co/Qwen/Qwen3-4B",
+  "base_model_details": {
+    "world_size": 1,
+    "checkpoint_format": "HUGGINGFACE",
+    "huggingface_files": [
+      ".gitattributes",
+      "README.md",
+      "config.json",
+      "generation_config.json",
+      "merges.txt",
+      "model-00001-of-00003.safetensors",
+      "model-00002-of-00003.safetensors",
+      "model-00003-of-00003.safetensors",
+      "model.safetensors.index.json",
+      "tokenizer.json",
+      "tokenizer_config.json",
+      "vocab.json"
+    ],
+    "parameter_count": "4411424256",
+    "tunable": true,
+    "model_type": "qwen3",
+    "supports_fireattention": true,
+    "default_precision": "BF16"
+  },
+  "peft_details": {},
+  "public": true,
+  "conversation_config": {},
+  "context_length": 40960,
+  "supports_tools": true,
+  "sku_infos": [
+    {
+      "sku": "LLM input tokens (cached)",
+      "amount": {
+        "currency_code": "USD",
+        "nanos": 100000000
+      },
+      "unit": "1M tokens"
+    },
+    {
+      "sku": "LLM output tokens",
+      "amount": {
+        "currency_code": "USD",
+        "nanos": 200000000
+      },
+      "unit": "1M tokens"
+    },
+    {
+      "sku": "LLM input tokens (uncached)",
+      "amount": {
+        "currency_code": "USD",
+        "nanos": 200000000
+      },
+      "unit": "1M tokens"
+    }
+  ],
+  "supports_lora": true,
+  "use_hf_apply_chat_template": true,
+  "update_time": "2026-10-26T20:15:13.621100Z",
+  "rl_tunable": true,
+  "training_context_length": 131072,
+  "use_training_v2": true,
+  "supervised_lora_tunable": true
+}

@@ -8,7 +8,7 @@ import hashlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-INCLUDED = ("data/dataset", "data/source", "evaluation/qwen3-4b-amazon-v2")
+INCLUDED = ("data/banking77", "records", "data/dataset", "data/source", "evaluation/banking77", "evaluation/qwen3-4b-amazon-v2")
 
 
 def digest(path: Path) -> str:
@@ -23,7 +23,7 @@ def current() -> dict[str, str]:
     found = {}
     for name in INCLUDED:
         for path in sorted((ROOT / name).rglob("*")):
-            if path.is_file():
+            if path.is_file() and path.name != ".DS_Store" and "reruns" not in path.parts:
                 found[path.relative_to(ROOT).as_posix()] = digest(path)
     return found
 

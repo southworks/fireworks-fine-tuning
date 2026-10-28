@@ -1,0 +1,49 @@
+{
+  "name": "accounts/southworks/supervisedFineTuningJobs/n3gtjgd9",
+  "display_name": "FT Qwen3 4B with Banking77 (validation)",
+  "create_time": "2026-10-12T16:16:11.382778Z",
+  "completed_time": "2026-10-12T18:40:51.059796Z",
+  "dataset": "accounts/southworks/datasets/banking77",
+  "state": "JOB_STATE_COMPLETED",
+  "state_timestamps": [
+    {
+      "state": "JOB_STATE_PENDING",
+      "transition_time": "2026-10-12T16:16:11.189760529Z"
+    },
+    {
+      "state": "JOB_STATE_RUNNING",
+      "transition_time": "2026-10-12T16:16:11.420386184Z"
+    },
+    {
+      "state": "JOB_STATE_COMPLETED",
+      "transition_time": "2026-10-12T18:40:51.059800824Z"
+    }
+  ],
+  "status": {
+    "message": "Training completed"
+  },
+  "created_by": "alberto.ito@southworks.com",
+  "output_model": "accounts/southworks/models/ft-qwen3-4b-banking-validation",
+  "base_model": "accounts/fireworks/models/qwen3-4b",
+  "epochs": 3,
+  "learning_rate": 0.0001,
+  "max_context_length": 32768,
+  "lora_rank": 8,
+  "evaluation_dataset": "accounts/southworks/datasets/banking77-validation",
+  "update_time": "2026-10-12T18:40:51.061915Z",
+  "job_progress": {
+    "percent": 100
+  },
+  "metrics_file_signed_url": "REDACTED (time-limited signed URL; regenerate with: firectl sftj get <job> -o json)",
+  "render_samples_signed_url": "REDACTED (time-limited signed URL; regenerate with: firectl sftj get <job> -o json)",
+  "lr_scheduler": {
+    "constant": {}
+  },
+  "batch_size_samples": 8,
+  "estimated_cost": {
+    "currency_code": "USD",
+    "nanos": 769110024
+  },
+  "renderer_hugging_face_repo_id": "Qwen/Qwen3-4B",
+  "encryption_state": "ENCRYPTION_STATE_PLAINTEXT"
+}

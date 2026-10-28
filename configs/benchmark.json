@@ -1,8 +1,0 @@
-{
-  "temperature": 0,
-  "top_p": 1,
-  "max_tokens": 500,
-  "workers": 4,
-  "cases": 103,
-  "task": "purchase_recommendation"
-}

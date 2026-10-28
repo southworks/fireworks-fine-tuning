@@ -32,7 +32,7 @@ Generation follows [DATASET_REVIEW_RULES.md](DATASET_REVIEW_RULES.md). The four 
 ```bash
 python3 scripts/build_source_subset.py
 
-export FOUNDRY_BASE_URL='https://YOUR_RESOURCE.openai.azure.com/openai'
+export FOUNDRY_BASE_URL='https://YOUR-RESOURCE.services.ai.azure.com/openai/v1'
 export FOUNDRY_API_KEY='...'
 python3 scripts/generate_sft_dataset.py \
   --data-dir data/source/raw \

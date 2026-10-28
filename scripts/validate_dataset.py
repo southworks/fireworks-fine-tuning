@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate canonical dataset structure, counts, routing, and benchmark integrity."""
+"""Validate the published datasets, Fireworks job records, and frozen benchmark evidence (offline)."""
 
 from __future__ import annotations
 
@@ -12,6 +12,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "dataset"
 EVAL = ROOT / "evaluation" / "qwen3-4b-amazon-v2"
+BANKING = ROOT / "data" / "banking77"
+FIREWORKS = ROOT / "records" / "fireworks"
+V2_TRAINING_SHA256 = "0640754bf0e6630683799d2f32035086c3ab1b9a5b9fba50dd08aa5e6c8b1e11"
 LABEL_RE = re.compile(r"^- Result: (BUY|CONDITIONAL_BUY|DO_NOT_BUY|INSUFFICIENT_EVIDENCE)$", re.M)
 
 
@@ -81,6 +84,7 @@ def main() -> int:
         "predictions_qwen3_4b_base.jsonl",
         "predictions_qwen3_4b_finetuned.jsonl",
         "predictions_gpt41mini.jsonl",
+        "predictions_gpt5.jsonl",
     )
     for name in prediction_files:
         predictions = list(rows(EVAL / name))
@@ -88,20 +92,61 @@ def main() -> int:
         assert {row["id"] for row in predictions} == test_ids, f"{name}: case IDs differ"
         assert all(not row.get("error") and row.get("prediction") for row in predictions), f"{name}: failed rows"
 
-    judgments = list(rows(EVAL / "judgments_gpt6sol.jsonl"))
-    assert len(judgments) == 103
-    assert {row["id"] for row in judgments} == test_ids
-    assert all(not row.get("error") and row.get("judgment") for row in judgments)
+    for name in ("judgments_gpt6sol.jsonl", "judgments_gpt6sol_with_gpt5.jsonl"):
+        judgments = list(rows(EVAL / name))
+        assert len(judgments) == 103, name
+        assert {row["id"] for row in judgments} == test_ids, name
+        assert all(not row.get("error") and row.get("judgment") for row in judgments), name
+
+    # Exact training file uploaded for Fireworks job o9pa8ud2 (ft-qwen3-4b-amazon-v2).
+    v2_path = DATA / "fireworks_v2_training.jsonl"
+    assert hashlib.sha256(v2_path.read_bytes()).hexdigest() == V2_TRAINING_SHA256, "v2 training file changed"
+    v2 = list(rows(v2_path))
+    master_by_user = {row["messages"][1]["content"]: row for row in master}
+    v2_products = set()
+    for number, row in enumerate(v2, 1):
+        validate_messages(row, f"v2:{number}")
+        source = master_by_user.get(row["messages"][1]["content"])
+        assert source, f"v2:{number}: request not found in master"
+        assert source["messages"][2]["content"] == row["messages"][2]["content"], f"v2:{number}: answer differs from master"
+        assert source["metadata"]["review_status"] == "approved" and source["metadata"]["dataset_split"] == "train"
+        v2_products.add(source["metadata"]["parent_asin"])
+    test_products = {master_by_user[row["messages"][1]["content"]]["metadata"]["parent_asin"] for row in test if row["messages"][1]["content"] in master_by_user}
+    assert len(test_products) == 103, "benchmark cases must trace back to the canonical ledger"
+    assert v2_products.isdisjoint(split_products["evaluation"]), "v2 training/evaluation product leakage"
+    assert v2_products.isdisjoint(test_products), "v2 training/benchmark product leakage"
+
+    job = json.loads((FIREWORKS / "sftj_amazon_v2_o9pa8ud2.json").read_text(encoding="utf-8"))
+    model = json.loads((FIREWORKS / "model_ft-qwen3-4b-amazon-v2.json").read_text(encoding="utf-8"))
+    dataset = json.loads((FIREWORKS / "dataset_amazon-reviews-v2-train.json").read_text(encoding="utf-8"))
+    assert model["fine_tuning_job"].endswith("/o9pa8ud2") and job["output_model"] == model["name"]
+    assert int(dataset["example_count"]) == len(v2) == 731
+    for path in FIREWORKS.glob("*.json"):
+        assert "Signature=" not in path.read_text(encoding="utf-8"), f"{path.name}: unredacted signed URL"
+
+    # Banking77 chat-format splits used for Fireworks SFT and the generative benchmark.
+    banking = {split: list(rows(BANKING / f"{split}.jsonl")) for split in ("train", "validation", "test")}
+    assert {k: len(v) for k, v in banking.items()} == {"train": 9002, "validation": 1001, "test": 3080}
+    label_sets = {}
+    for split, items in banking.items():
+        for number, row in enumerate(items, 1):
+            assert [m["role"] for m in row["messages"]] == ["system", "user", "assistant"], f"banking77 {split}:{number}"
+        label_sets[split] = {row["messages"][2]["content"] for row in items}
+    assert len(label_sets["train"]) == 77 and label_sets["train"] == label_sets["test"] == label_sets["validation"]
 
     print(json.dumps({
         "status": "ok",
         "canonical_examples": len(master),
-        "training_examples": len(train),
+        "training_examples_current_export": len(train),
+        "training_examples_fireworks_v2_job": len(v2),
         "evaluation_examples": len(evaluation),
         "benchmark_cases": len(test),
-        "prediction_rows": 3 * len(test),
-        "judgments": len(judgments),
+        "prediction_rows": len(prediction_files) * len(test),
+        "judge_sessions": 2,
         "train_evaluation_product_overlap": 0,
+        "v2_training_benchmark_product_overlap": 0,
+        "fireworks_job_records": "consistent, redacted",
+        "banking77": {k: len(v) for k, v in banking.items()},
     }, indent=2))
     return 0
 

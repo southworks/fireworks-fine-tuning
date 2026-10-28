@@ -1,0 +1,15 @@
+{
+  "name": "accounts/southworks/datasets/banking77",
+  "display_name": "banking77",
+  "create_time": "2026-10-09T20:53:22.183048Z",
+  "state": "READY",
+  "status": {},
+  "example_count": "9002",
+  "user_uploaded": {},
+  "format": "CHAT",
+  "created_by": "alberto.ito@southworks.com",
+  "update_time": "2026-10-09T20:53:25.611902Z",
+  "estimated_token_count": "702600",
+  "average_turn_count": 3,
+  "encryption_state": "ENCRYPTION_STATE_PLAINTEXT"
+}

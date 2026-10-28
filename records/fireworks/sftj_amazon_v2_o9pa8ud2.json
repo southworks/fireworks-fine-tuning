@@ -1,0 +1,48 @@
+{
+  "name": "accounts/southworks/supervisedFineTuningJobs/o9pa8ud2",
+  "display_name": "FT Qwen3 4B with Amazon reviews v2",
+  "create_time": "2026-10-20T19:09:16.676852Z",
+  "completed_time": "2026-10-20T19:18:16.932223Z",
+  "dataset": "accounts/southworks/datasets/amazon-reviews-v2-train",
+  "state": "JOB_STATE_COMPLETED",
+  "state_timestamps": [
+    {
+      "state": "JOB_STATE_PENDING",
+      "transition_time": "2026-10-20T19:09:16.458137050Z"
+    },
+    {
+      "state": "JOB_STATE_RUNNING",
+      "transition_time": "2026-10-20T19:09:16.722489339Z"
+    },
+    {
+      "state": "JOB_STATE_COMPLETED",
+      "transition_time": "2026-10-20T19:18:16.932230075Z"
+    }
+  ],
+  "status": {
+    "message": "Training completed"
+  },
+  "created_by": "alberto.ito@southworks.com",
+  "output_model": "accounts/southworks/models/ft-qwen3-4b-amazon-v2",
+  "base_model": "accounts/fireworks/models/qwen3-4b",
+  "epochs": 1,
+  "learning_rate": 0.0001,
+  "max_context_length": 32768,
+  "lora_rank": 8,
+  "update_time": "2026-10-20T19:18:16.936865Z",
+  "job_progress": {
+    "percent": 100
+  },
+  "metrics_file_signed_url": "REDACTED (time-limited signed URL; regenerate with: firectl sftj get <job> -o json)",
+  "render_samples_signed_url": "REDACTED (time-limited signed URL; regenerate with: firectl sftj get <job> -o json)",
+  "lr_scheduler": {
+    "constant": {}
+  },
+  "batch_size_samples": 8,
+  "estimated_cost": {
+    "currency_code": "USD",
+    "nanos": 862919986
+  },
+  "renderer_hugging_face_repo_id": "Qwen/Qwen3-4B",
+  "encryption_state": "ENCRYPTION_STATE_PLAINTEXT"
+}

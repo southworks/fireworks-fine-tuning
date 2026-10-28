@@ -1,0 +1,60 @@
+{
+  "run_name": "banking77-qwen3-0.6b-lora-2epochs",
+  "model": "Qwen/Qwen3-0.6B",
+  "method": "LoRA",
+  "device": "mps",
+  "dtype": "bfloat16",
+  "train_examples": 9002,
+  "validation_examples": 1001,
+  "test_examples": 3080,
+  "num_labels": 77,
+  "global_steps": 2252,
+  "resume_start_step": 1126,
+  "completed_steps_this_run": 1126,
+  "effective_batch_size": 8,
+  "examples_seen_approx": 18016,
+  "examples_seen_this_run_approx": 9008,
+  "train_loop_seconds_including_evaluation": 4626.21,
+  "evaluation_seconds_during_train": 1270.41,
+  "estimated_optimization_seconds": 3355.8,
+  "estimated_optimization_seconds_per_step": 2.98,
+  "train_metrics": {
+    "train_runtime": 4625.9894,
+    "train_samples_per_second": 3.892,
+    "train_steps_per_second": 0.487,
+    "total_flos": 6108413694050304.0,
+    "train_loss": 0.5137500390278086,
+    "train_loss_this_run": 1.0275000780556172,
+    "epoch": 2.0
+  },
+  "validation_metrics": {
+    "validation_loss": 0.5837404727935791,
+    "validation_accuracy": 0.8521478521478522,
+    "validation_macro_precision": 0.8559575659375627,
+    "validation_macro_recall": 0.8396321667043593,
+    "validation_macro_f1": 0.8394286842746758,
+    "validation_runtime": 112.7487,
+    "validation_samples_per_second": 8.878,
+    "validation_steps_per_second": 1.118,
+    "epoch": 2.0
+  },
+  "test_metrics": {
+    "accuracy": 0.8506493506493507,
+    "macro_precision": 0.855938167141953,
+    "macro_recall": 0.8506493506493504,
+    "macro_f1": 0.8508984605730113,
+    "loss": 0.5535240173339844
+  },
+  "losses": {
+    "train_average": 1.0275000780556172,
+    "train_final_logged": 0.7469,
+    "validation": 0.5837404727935791,
+    "test": 0.5535240173339844
+  },
+  "best_checkpoint": "<source-repo>/Qwen3-0.6B/outputs/banking77/checkpoints/two_epochs/checkpoint-2250",
+  "environment": {
+    "python": "3.9.6",
+    "torch": "2.8.0",
+    "macos": "26.2"
+  }
+}

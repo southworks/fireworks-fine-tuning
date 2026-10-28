@@ -19,9 +19,12 @@ The small `BUY` support makes class-specific estimates unstable.
 
 ## Compared systems
 
-- Qwen3-4B base deployment.
-- Qwen3-4B Amazon v2 fine-tuned deployment.
-- GPT-4.1 mini.
+| System | Served by | Generation settings |
+|---|---|---|
+| Qwen3-4B base | Fireworks dedicated deployment | temperature 0, top_p 1, max 500 tokens, `reasoning_effort=none` |
+| Qwen3-4B Amazon v2 fine-tuned (LoRA) | Fireworks, LoRA add-on on a dedicated deployment | same as base |
+| GPT-4.1 mini | Microsoft Foundry, Responses API | max 500 output tokens |
+| GPT-5 | Microsoft Foundry, Responses API | no temperature (rejected by the deployment), max 8,000 output tokens (includes reasoning) |
 
 All received the same messages and explicit output contract. The recorded runs produced 103/103 valid responses and 103/103 explicit `Result` fields for every system.
 
@@ -31,10 +34,19 @@ Accuracy, Macro-F1, Weighted-F1, per-class metrics, and confusion matrices are c
 
 ## Blinded LLM judge
 
-GPT-6 Sol evaluated anonymized answers as A/B/C. Alias order changes between cases. It scored grounding, evidence coverage, rule compliance, severity calibration, catalog/user separation, actionability, unsupported claims, critical errors, overall quality, and relative preference.
+GPT-6 Sol evaluated anonymized answers as A/B/C. Alias order is shuffled per case with a deterministic seed. The judge prompt and JSON schema are in `scripts/foundry_models.py` (`JUDGE_INSTRUCTIONS`, `score_schema`).
+
+Two sessions were run, each with three candidates: **A** = base, fine-tuned, GPT-4.1 mini (`judgments_gpt6sol.jsonl`); **B** = base, fine-tuned, GPT-5 (`judgments_gpt6sol_with_gpt5.jsonl`). Scores are relative to the other candidates in the same session and must not be compared across sessions. It scored grounding, evidence coverage, rule compliance, severity calibration, catalog/user separation, actionability, unsupported claims, critical errors, overall quality, and relative preference.
 
 The judge is not ground truth. Its primary value is a consistent comparative rubric. Categorical accuracy and F1 against approved labels remain the main decision metrics.
 
-## Reproduction
+## Scripts
 
-`scripts/benchmark.py` prepares cases, runs models through the Fireworks-compatible chat-completions endpoint, and recomputes reference-overlap metrics. The repository publishes the complete per-case judge results so its aggregation is auditable. Exact model deployments should be supplied through `configs/models.example.json`; never commit API keys.
+| Step | Script |
+|---|---|
+| Fireworks inference, reference-overlap metrics | `scripts/benchmark.py run` / `summarize` |
+| Foundry inference (GPT-4.1 mini, GPT-5), judge, judge aggregation | `scripts/foundry_models.py generate` / `judge` / `summarize` |
+| Label extraction, accuracy, F1, confusion matrices | `scripts/decision_metrics.py` |
+| Result tables | `scripts/build_report.py` |
+
+The repository publishes every per-case answer and judgment so all aggregates are auditable. Models and keys are supplied through `.env` (see `.env.example`); never commit API keys.

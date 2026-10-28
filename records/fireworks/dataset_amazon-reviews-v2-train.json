@@ -1,0 +1,15 @@
+{
+  "name": "accounts/southworks/datasets/amazon-reviews-v2-train",
+  "display_name": "amazon-reviews-v2-train",
+  "create_time": "2026-10-20T19:05:59.211686Z",
+  "state": "READY",
+  "status": {},
+  "example_count": "731",
+  "user_uploaded": {},
+  "format": "CHAT",
+  "created_by": "alberto.ito@southworks.com",
+  "update_time": "2026-10-20T19:06:04.452375Z",
+  "estimated_token_count": "1826200",
+  "average_turn_count": 3,
+  "encryption_state": "ENCRYPTION_STATE_PLAINTEXT"
+}

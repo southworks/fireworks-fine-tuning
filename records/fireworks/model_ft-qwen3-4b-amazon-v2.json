@@ -1,0 +1,56 @@
+{
+  "name": "accounts/southworks/models/ft-qwen3-4b-amazon-v2",
+  "create_time": "2026-10-20T19:09:16.675084Z",
+  "created_by": "rft-worker@southworks.sa.fireworks.ai",
+  "state": "READY",
+  "status": {},
+  "kind": "HF_PEFT_ADDON",
+  "base_model_details": {},
+  "peft_details": {
+    "base_model": "accounts/fireworks/models/qwen3-4b",
+    "r": 8,
+    "target_modules": [
+      "down_proj",
+      "gate_proj",
+      "k_proj",
+      "o_proj",
+      "q_proj",
+      "up_proj",
+      "v_proj"
+    ],
+    "base_model_type": "qwen3"
+  },
+  "conversation_config": {},
+  "fine_tuning_job": "accounts/southworks/rlorTrainerJobs/o9pa8ud2",
+  "sku_infos": [
+    {
+      "sku": "LLM input tokens (cached)",
+      "amount": {
+        "currency_code": "USD",
+        "nanos": 100000000
+      },
+      "unit": "1M tokens"
+    },
+    {
+      "sku": "LLM output tokens",
+      "amount": {
+        "currency_code": "USD",
+        "nanos": 200000000
+      },
+      "unit": "1M tokens"
+    },
+    {
+      "sku": "LLM input tokens (uncached)",
+      "amount": {
+        "currency_code": "USD",
+        "nanos": 200000000
+      },
+      "unit": "1M tokens"
+    }
+  ],
+  "update_time": "2026-10-27T21:25:22.508951432Z",
+  "rl_tunable": true,
+  "use_training_v2": true,
+  "supervised_lora_tunable": true,
+  "encryption_state": "ENCRYPTION_STATE_PLAINTEXT"
+}
