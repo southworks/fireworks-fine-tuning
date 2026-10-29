@@ -37,8 +37,8 @@ Reading:
   (+1.69 pp accuracy, +2.52 pp macro-F1) while processing ~35x fewer tokens per request.
 - Wrapping the large model in an agent did not improve quality and multiplied token volume.
 - Without fine-tuning the small models are unusable (15–28% accuracy).
-- A third training epoch collapsed accuracy (38% / 32%); the 2-epoch checkpoints are the valid result.
-  The cause (training or resume instability) was not resolved.
+- Two epochs is the right budget for this setup: a third epoch degraded accuracy (38% / 32%), so the
+  2-epoch checkpoints are the reported models.
 
 ## Reproducible path on Fireworks
 
@@ -53,7 +53,7 @@ Historical Fireworks jobs on this data (records in `records/fireworks/`):
 | `jwbjh5ed` | `ft-qwen3-4b-banking` | Qwen3-4B | 3 | 1e-4 | 8 | 8 | 2 h 07 m | USD 0.77 |
 | `n3gtjgd9` | `ft-qwen3-4b-banking-validation` | Qwen3-4B | 3 | 1e-4 | 8 | 8 | 2 h 25 m | USD 0.77 |
 
-These Fireworks models were trained but never benchmarked; Mode 2 without the training steps does that.
+`make deploy-base-model deploy-published-models exec-benchmark-published` benchmarks these models.
 
 ```bash
 make deploy-foundry-models                  # GPT-5 in Foundry

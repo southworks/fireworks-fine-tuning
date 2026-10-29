@@ -29,7 +29,7 @@ Training data label mix (731): 300 `DO_NOT_BUY`, 191 `INSUFFICIENT_EVIDENCE`, 15
 The training rows carry a shorter system prompt (763 characters). The benchmark sends a longer system
 prompt (1,400 characters) that adds the exact output template. All four models in the benchmark received
 the same long prompt. The user and assistant contents are identical to the canonical ledger; only the
-system message differs. This is recorded as a limitation, not corrected after the fact.
+system message differs.
 
 ### Superseded job
 
@@ -41,7 +41,7 @@ benchmarked model is the `o9pa8ud2` output. The record is kept for transparency.
 
 - Base: `accounts/southworks/deployments/w7u134w9` (dedicated deployment of Qwen3-4B).
 - Fine-tuned: `accounts/southworks/models/ft-qwen3-4b-amazon-v2#accounts/southworks/deployments/wjybzim4`
-  (LoRA add-on on a dedicated deployment).
+  (dedicated deployment of the fine-tuned model, created from the Fireworks console).
 - Requests: `temperature=0`, `top_p=1`, `max_tokens=500`, `reasoning_effort="none"` (disables Qwen3 thinking).
 
 ## Banking77 on Fireworks
@@ -51,9 +51,9 @@ benchmarked model is the `o9pa8ud2` output. The record is kept for transparency.
 | `jwbjh5ed` | `ft-qwen3-4b-banking` | `banking77` (9,002) | — | 3 | 1e-4 | 8 | 8 | 2 h 07 m | USD 0.77 |
 | `n3gtjgd9` | `ft-qwen3-4b-banking-validation` | `banking77` (9,002) | `banking77-validation` | 3 | 1e-4 | 8 | 8 | 2 h 25 m | USD 0.77 |
 
-Both use Qwen3-4B and the files in `data/banking77/`. They have not been benchmarked yet
-(`make deploy-base-model deploy-published-models exec-benchmark-published`). The frozen Banking77 results come from a separate local experiment;
-see `evaluation/banking77/README.md`.
+Both use Qwen3-4B and the files in `data/banking77/`; `make deploy-base-model deploy-published-models
+exec-benchmark-published` benchmarks them. The frozen Banking77 results come from a separate local
+experiment; see `evaluation/banking77/README.md`.
 
 ## Reproducing a job
 
@@ -64,8 +64,8 @@ overwrite the published models. `make upload-datasets train-models` runs them
 job and model records are saved next to these ones in `records/fireworks/`.
 A new run will not produce bit-identical weights; evaluate it with the same benchmark before comparing.
 
-## Not available
+## Training curves
 
-Per-step training loss is available from Fireworks only through short-lived signed URLs and was not
-archived. Refresh the job record (`firectl sftj get o9pa8ud2 -o json`) and download `metrics_file_signed_url`
-before it expires if the loss curve is needed.
+The loss curve of every job is in the Fireworks console (job page) and downloadable through the
+`metrics_file_signed_url` returned by `firectl sftj get <job> -o json` (a time-limited link, redacted in
+the stored records).

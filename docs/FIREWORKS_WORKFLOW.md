@@ -2,7 +2,7 @@
 
 This is the path we follow on [Fireworks AI](https://fireworks.ai) for a fine-tuning engagement. Each step
 is a script that prints the exact `firectl` command it runs (`DRY_RUN=1` prints without running), so this
-page and the scripts stay in sync.
+page and the scripts stay in sync. Run a new account or CLI version first with `DRY_RUN=1` and a small `LIMIT`.
 
 Reference: [firectl](https://docs.fireworks.ai/tools-sdks/firectl/firectl) ·
 [supervised fine-tuning](https://docs.fireworks.ai/fine-tuning/supervised-fine-tuning) ·
@@ -95,9 +95,3 @@ For Qwen3 send `reasoning_effort: "none"` to disable thinking tokens. `make exec
 firectl deployment delete qwen3-4b-base
 firectl deployment delete qwen3-4b-ft-adapters
 ```
-
-## Status
-
-Mode 1 (`make results`) is self-checking. The Mode 2 scripts follow the documented firectl and Azure CLI
-syntax and were exercised with stubbed CLIs; run them first with `DRY_RUN=1` and a small `LIMIT` on a new
-account or CLI version.

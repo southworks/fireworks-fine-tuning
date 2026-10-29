@@ -23,7 +23,7 @@ The raw source layer is reconstructed using `data/source/product_plan.json`, `da
 | Training file of the published v2 model | 731 |
 | Evaluation export | 118 |
 | Backup-routed | 483 |
-| Pending review | 546 |
+| Held for human review (not exported) | 546 |
 | Rejected | 56 |
 
 ### Which file trained the published model

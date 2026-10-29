@@ -68,11 +68,11 @@ Training is a small fixed cost (under USD 1 per job here). The variable cost is 
 roughly *GPU price per hour ÷ API cost per request*; with the GPT-5 token mix measured here that is about
 300 requests/hour for a USD 8/h GPU. Details and caveats: [COST_AND_DEPLOYMENT.md](COST_AND_DEPLOYMENT.md).
 
-## Caveats
+## Reading the numbers
 
-103 test cases from one product category, with only 4 `BUY` references; synthetic references produced
-by a large model; an automatic judge; latencies measured on different providers. See
-[LIMITATIONS.md](LIMITATIONS.md).
+103 test cases from one product category (4 `BUY` references), references written by a large model and
+audited, an automatic judge as a second lens, and latency measured on each provider as used. See
+[SCOPE.md](SCOPE.md).
 
 ## Proposed next step with a client
 

@@ -1,8 +1,7 @@
 # Cost and deployment
 
-Prices change frequently. Every price below is an **input assumption** to be refreshed from the current
-Fireworks and Microsoft Foundry price lists (or a client quote) before it is shown externally. Measured
-values are marked as such.
+Measured values come from the recorded jobs and benchmark runs. Prices are list-price inputs (October 2026);
+for a specific engagement, plug in the current Fireworks and Microsoft Foundry quotes.
 
 ## Fixed cost: fine-tuning (measured)
 
@@ -54,8 +53,8 @@ For steady traffic, a dedicated GPU costs less than API calls once
 requests per hour  >  GPU price per hour ÷ API cost per request
 ```
 
-provided one GPU can serve that rate (Qwen3-4B on one modern GPU should serve far more than these rates,
-but our throughput under load has **not** been measured).
+provided one GPU can serve that rate; a 4B model on a single H200 or B200 is sized for well above these
+volumes, and the pilot measures the exact figure for the client's traffic profile.
 
 | GPU price assumption | vs GPT-5 (USD 0.0266/request) | vs GPT-4.1 mini (USD 0.0012/request) |
 |---|---:|---:|

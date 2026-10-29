@@ -1,112 +1,158 @@
-# Small fine-tuned models vs. general-purpose LLMs on Fireworks AI
+# Fine-tuning small models on Fireworks AI
 
-**Southworks × Fireworks AI — reproducible case study**
+**A Southworks × Fireworks AI case study: when a small fine-tuned model beats a large general-purpose LLM, and how to prove it.**
 
-This repository shows, end to end, how we specialize a small open model for a narrow business task on
-[Fireworks AI](https://fireworks.ai) and how we prove whether it is better than a general-purpose LLM:
-data preparation, fine-tuning with `firectl`, deployment, benchmarking, and an honest reading of the results.
+We took Qwen3-4B, fine-tuned it on [Fireworks AI](https://fireworks.ai) for two narrow business tasks, and
+compared it with GPT-4.1 mini and GPT-5. This repository contains everything behind the results: the data,
+the training recipes, the deployment and benchmark scripts, and every model answer.
 
-It contains two cases:
+> **New here?** Run `make results` (no accounts, ~1 minute), then read the
+> [executive summary](docs/EXECUTIVE_SUMMARY.md).
 
-| Case | Task | Fine-tuned model | Compared with | Headline |
-|---|---|---|---|---|
-| **Amazon MRO purchasing copilot** (main) | Recommend `BUY` / `CONDITIONAL_BUY` / `DO_NOT_BUY` / `INSUFFICIENT_EVIDENCE` for an industrial product, with a grounded rationale | Qwen3-4B + LoRA on Fireworks (`ft-qwen3-4b-amazon-v2`) | GPT-4.1 mini, GPT-5, Qwen3-4B base | Best decision accuracy (54.4% vs 43.7% and 37.9%), ~20x lower median latency than GPT-5 and half its tokens; GPT-5 writes better explanations |
-| **Banking77** (supporting) | Classify a customer query into 1 of 77 intents | Qwen3.5-0.8B + LoRA (local) · Qwen3-4B + LoRA (Fireworks path) | GPT-5.6 Luna, GPT-4o agent | 0.8B model: 86.9% vs 85.2% for GPT-5.6 Luna with ~35x fewer tokens |
+---
 
-Start with the **[executive summary](docs/EXECUTIVE_SUMMARY.md)**.
+## Results at a glance
 
-## Amazon case: main result (103 frozen, product-disjoint test cases)
+**Amazon purchasing copilot** — decide `BUY` / `CONDITIONAL_BUY` / `DO_NOT_BUY` / `INSUFFICIENT_EVIDENCE`
+for an industrial product from its catalog data and customer reviews (103 test cases).
 
-| Model | Decision accuracy | Macro-F1 | Judge score (same session) | Output tokens | Median latency |
-|---|---:|---:|---:|---:|---:|
-| **Qwen3-4B fine-tuned v2** | **54.37%** | **0.4607** | 61.00 vs GPT-4.1 mini · 60.40 vs GPT-5 | 15,663 | **1.16 s** |
-| GPT-4.1 mini | 43.69% | 0.3749 | 53.64 | 20,506 | 3.41 s |
-| GPT-5 | 37.86% | 0.3330 | **63.70** | 246,273 | 25.00 s |
-| Qwen3-4B base | 27.18% | 0.2333 | 42.75 · 43.12 | 11,042 | 1.35 s |
+| Model | Right decision | Median response time | Tokens for 103 answers |
+|---|---:|---:|---:|
+| **Qwen3-4B fine-tuned** | **54.4%** | **1.2 s** | 247k |
+| GPT-4.1 mini | 43.7% | 3.4 s | 244k |
+| GPT-5 | 37.9% | 25.0 s | 470k |
+| Qwen3-4B before fine-tuning | 27.2% | 1.3 s | 243k |
 
-- Fine-tuning moved Qwen3-4B from 27% to 54% decision accuracy with **731 training examples, a 9-minute
-  job and an estimated USD 0.86 training cost** on Fireworks.
-- GPT-5 over-recommends `BUY` (52 times; the reference has 4). The fine-tuned model reproduces the
-  expected decision mix far better.
-- GPT-5 produces the best-grounded explanations according to a blind GPT-6 Sol judge, so the
-  recommended pattern is **fine-tuned model for the decision, large model as reviewer/writer, human
-  approval for purchases**. No model is fit for autonomous purchasing: every one shows critical errors in
-  more than half of the cases according to the judge.
+**Banking77** — classify a customer message into 1 of 77 intents (3,080 test cases).
 
-Full tables: [evaluation/qwen3-4b-amazon-v2/RESULTS.md](evaluation/qwen3-4b-amazon-v2/RESULTS.md).
-The claim is deliberately scoped to this task, data, prompt and rubric.
+| Model | Accuracy | Tokens per request |
+|---|---:|---:|
+| **Qwen3.5-0.8B fine-tuned** | **86.9%** | ~13 |
+| GPT-5.6 Luna | 85.2% | 444 |
 
-## Run it
+**In short:** fine-tuning took 731 examples, a 9-minute job and under USD 1 on Fireworks, and produced the
+most accurate and fastest model for the decision. GPT-5 still writes the best-grounded explanations, so the
+recommended design is *fine-tuned model decides, large model reviews, human approves*.
+Details: [results](docs/RESULTS.md) · [how to read them](docs/SCOPE.md).
 
-Two modes:
+---
 
-| Mode | What it does | Needs | Cost |
-|---|---|---|---|
-| **1 · results** | Shows the results from the published data and metrics: validates data and leakage, recomputes every metric from the frozen answers, prints the tables, side-by-side answers and the Banking77 case | Python 3.10+ | Free, ~1 min |
-| **2 · processes** | Runs the real process on Fireworks and Foundry, one process at a time or all together | `firectl`, Azure CLI, credentials in `.env` | Training (~USD 1 per job) + GPU time + Foundry tokens |
+## Quick start
+
+### 1. See the results (offline)
+
+Requires Python 3.10+ and `make`. Nothing to install, no accounts.
 
 ```bash
-make results                 # Mode 1
-cp .env.example .env         # Mode 2 credentials
-make help                    # list of processes
-make pipeline                # Mode 2, every process in order, then undeploy
+git clone https://github.com/southworks/fireworks-fine-tuning.git
+cd fireworks-fine-tuning
+make results
 ```
 
-Mode 2 processes. Each one is a Python script driven by a config file, so it can be run, adapted or
-reused on its own:
+This validates the data, recomputes every metric from the stored model answers, and prints the results
+and a few answers side by side.
 
-| Process | Make target | Script | Config |
-|---|---|---|---|
-| Deploy GPT-5 and GPT-6 Sol on Foundry (reused if they exist) | `deploy-foundry-models` | `deploy_foundry.py` | `configs/foundry/models.toml` |
-| Upload datasets to Fireworks | `upload-datasets` (`upload-dataset-amazon-reviews`, `upload-dataset-banking77`) | `upload_dataset.py --name --path` | — |
-| Fine-tune | `train-models` (`train-model-amazon-reviews`, `train-model-banking77`) | `train_model.py --config` | `configs/training/*.toml` |
-| Deploy on Fireworks | `deploy-models` (`deploy-base-model`, `deploy-ft-models`) | `deploy_model.py --config` | `configs/deployment/*.toml` |
-| Benchmark | `exec-benchmark` (`exec-benchmark-amazon-reviews`, `exec-benchmark-banking77`) | `run_benchmark.py --config` | `configs/benchmark/*.toml` |
-| Delete Fireworks deployments | `undeploy` | `undeploy_model.py` | `configs/deployment/*.toml` |
+### 2. Run the process yourself (Fireworks + Microsoft Foundry)
 
-Options for any target: `DRY_RUN=1` prints the exact `firectl` / `az` commands without running them;
-`FORCE=1` deletes and recreates a Fireworks resource that already exists (names are fixed in the configs);
-`LIMIT=10` benchmarks a sample. To re-run the benchmark on the fine-tuned models behind the published
-results without training: `make deploy-base-model deploy-published-models exec-benchmark-published`.
-Fresh results go to `evaluation/reruns/` (git-ignored); the published evidence is never overwritten.
-Step-by-step `firectl` details: [docs/FIREWORKS_WORKFLOW.md](docs/FIREWORKS_WORKFLOW.md).
+Prerequisites:
 
-## Repository map
+- [ ] Fireworks account and API key — install the CLI: `brew tap fw-ai/firectl && brew install firectl`
+- [ ] Azure subscription with a Microsoft Foundry resource — install the CLI: `brew install azure-cli`, then `az login`
+- [ ] `cp .env.example .env` and fill in the keys and resource names
+
+Then run the processes one by one, or all together with `make pipeline`:
+
+```bash
+make deploy-foundry-models    # GPT-5 (baseline) and GPT-6 Sol (judge) on Microsoft Foundry
+make upload-datasets          # training data -> Fireworks
+make train-models             # fine-tune Qwen3-4B (Amazon ~10 min, Banking77 ~2.5 h)
+make deploy-models            # base model + fine-tuned models on Fireworks (scale to zero when idle)
+make exec-benchmark           # base vs fine-tuned vs GPT-5 (+ blind judge for Amazon)
+make undeploy                 # delete the Fireworks deployments
+```
+
+| Option | Example | Effect |
+|---|---|---|
+| `DRY_RUN=1` | `make train-models DRY_RUN=1` | Print the exact `firectl` / `az` commands without running them |
+| `LIMIT=n` | `make exec-benchmark LIMIT=10` | Benchmark a sample instead of the full test set |
+| `FORCE=1` | `make upload-datasets FORCE=1` | Replace a Fireworks resource that already exists |
+
+`make help` lists every target, including single-case ones such as `make train-model-banking77`.
+New results are written to `evaluation/reruns/`, next to (never over) the published ones.
+
+> Want to benchmark the exact models behind the published results without training?
+> `make deploy-base-model deploy-published-models exec-benchmark-published`
+
+---
+
+## How it works
+
+```mermaid
+flowchart LR
+    A[Training data<br/>data/] -->|upload_dataset.py| B[Fireworks dataset]
+    B -->|train_model.py<br/>configs/training| C[Fine-tuned LoRA model]
+    C -->|deploy_model.py<br/>configs/deployment| D[Fireworks deployment]
+    E[GPT-5 / GPT-6 Sol<br/>configs/foundry] -->|deploy_foundry.py| F[Microsoft Foundry]
+    D --> G[run_benchmark.py<br/>configs/benchmark]
+    F --> G
+    G --> H[Results<br/>evaluation/reruns]
+```
+
+Every step is a small Python script driven by a config file. The scripts call the official CLIs
+(`firectl`, `az`) and print each command, so they double as a reference for doing the same by hand.
+To adapt the study to a new use case, add a dataset and copy the config files.
+
+| To change... | Edit |
+|---|---|
+| Training recipe (epochs, learning rate, LoRA rank...) | `configs/training/*.toml` |
+| Hardware and scaling | `configs/deployment/*.toml` |
+| Models compared, test set, judge | `configs/benchmark/*.toml` |
+| Foundry models and capacity | `configs/foundry/models.toml` |
+
+---
+
+## What's in the repository
 
 ```text
-README.md                       this page
-Makefile                        Mode 1 (results) and the Mode 2 processes
-.env.example                    credentials for Mode 2
-configs/
-  training/                     fine-tuning recipes (Amazon reviews, Banking77)
-  deployment/                   Fireworks deployments (base model; fine-tuned adapters on one GPU; published adapters)
-  foundry/                      Foundry deployments (GPT-5 baseline, GPT-6 Sol judge)
-  benchmark/                    which models, test set, prompts and judge for each benchmark
-records/fireworks/              firectl exports of the real jobs, models and datasets (signed URLs redacted)
-data/
-  dataset/                      Amazon SFT ledger; fireworks_v2_training.jsonl = exact file used by job o9pa8ud2
-  source/                       deterministic 5,000-product selection plan (raw reviews are downloaded, not shipped)
-  banking77/                    Banking77 train/validation/test in chat format
-evaluation/
-  qwen3-4b-amazon-v2/           frozen 103-case benchmark: test set, 4 models' answers, 2 judge sessions, metrics, RESULTS.md
-  banking77/                    frozen local results + instructions for the Fireworks path
-scripts/                        standard-library Python: one script per process + validation, inference, judge, metrics, reports
-docs/                           executive summary, method, results, cost, limitations, reproducibility
+├── Makefile                  entry point: make results, make <process>
+├── configs/                  training, deployment, Foundry and benchmark settings (TOML)
+├── data/
+│   ├── dataset/              Amazon purchasing-copilot data (fireworks_v2_training.jsonl = published model's training set)
+│   ├── source/               product selection used to build it from Amazon Reviews 2023
+│   └── banking77/            Banking77 train / validation / test
+├── evaluation/
+│   ├── qwen3-4b-amazon-v2/   published benchmark: test cases, every model's answers, judge scores, RESULTS.md
+│   └── banking77/            Banking77 results
+├── records/fireworks/        Fireworks records of the training jobs, models and datasets
+├── scripts/                  one script per process + validation, metrics and report tools
+└── docs/                     explanations (see below)
 ```
+
+---
 
 ## Documentation
 
-- [Executive summary](docs/EXECUTIVE_SUMMARY.md) — the business reading in two pages
-- [Fireworks workflow](docs/FIREWORKS_WORKFLOW.md) — `firectl` from dataset upload to deployment teardown
-- [Fine-tuning record](docs/FINETUNING.md) — the actual jobs, hyperparameters, duration and cost
-- [Dataset](docs/DATASET.md) · [Dataset generation](docs/DATASET_GENERATION.md) · [Review rules](docs/DATASET_REVIEW_RULES.md)
-- [Benchmark methodology](docs/BENCHMARK_METHODOLOGY.md) · [Results](docs/RESULTS.md)
-- [Cost and deployment](docs/COST_AND_DEPLOYMENT.md) · [Limitations](docs/LIMITATIONS.md) · [Reproducibility](docs/REPRODUCIBILITY.md)
-- [Banking77 case](evaluation/banking77/README.md)
+| I want to... | Read |
+|---|---|
+| Understand the business case in 5 minutes | [Executive summary](docs/EXECUTIVE_SUMMARY.md) |
+| See all the numbers | [Results](docs/RESULTS.md) · [full tables](evaluation/qwen3-4b-amazon-v2/RESULTS.md) · [Banking77](evaluation/banking77/README.md) |
+| Know how far the results generalize | [Scope and interpretation](docs/SCOPE.md) |
+| Learn the Fireworks workflow (firectl) | [Fireworks workflow](docs/FIREWORKS_WORKFLOW.md) |
+| See the exact training jobs and their cost | [Fine-tuning record](docs/FINETUNING.md) |
+| Estimate cost and choose a deployment | [Cost and deployment](docs/COST_AND_DEPLOYMENT.md) |
+| Understand the data and how it was built | [Dataset](docs/DATASET.md) · [Generation](docs/DATASET_GENERATION.md) · [Review rules](docs/DATASET_REVIEW_RULES.md) |
+| Understand how models were compared | [Benchmark methodology](docs/BENCHMARK_METHODOLOGY.md) |
+| Reproduce or extend the work | [Reproducibility](docs/REPRODUCIBILITY.md) |
 
-## Data sources and licensing
+---
 
-Amazon data is derived from [Amazon Reviews 2023](https://amazon-reviews-2023.github.io/) (McAuley Lab);
-the 533,879 raw reviews are not redistributed. Banking77 is from
-[PolyAI/banking77](https://huggingface.co/datasets/PolyAI/banking77) (CC BY 4.0). See [NOTICE.md](NOTICE.md).
-A repository-wide license has not been asserted yet.
+## Data sources
+
+- **Amazon Reviews 2023** (Industrial & Scientific), McAuley Lab —
+  [project](https://amazon-reviews-2023.github.io/) · [paper](https://arxiv.org/abs/2403.03952).
+  The repository contains derived examples; the raw reviews are downloaded from the source by
+  `scripts/build_source_subset.py`. Product names, reviews and trademarks belong to their owners.
+- **Banking77**, PolyAI — [dataset](https://huggingface.co/datasets/PolyAI/banking77) ·
+  [paper](https://arxiv.org/abs/2003.04807), CC BY 4.0. Converted to chat format; validation is a stratified
+  10% of the training split (seed 42).
+- **Qwen3** models by the Qwen team, served and fine-tuned on Fireworks AI.
