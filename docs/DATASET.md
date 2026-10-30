@@ -11,7 +11,7 @@ The experiment uses the `Industrial_and_Scientific` category of Amazon Reviews 2
 - All matching source reviews retained, without per-product review caps or rating filters.
 - Every selected product has metadata and at least three reviews.
 
-The raw source layer is reconstructed using `data/source/product_plan.json`, `data/source/manifest.json`, and `scripts/build_source_subset.py`.
+The raw source layer is reconstructed using `data/source/product_plan.json`, `data/source/manifest.json`, and `scripts/dataset/build_source_subset.py`.
 
 ## Canonical derived dataset
 
@@ -53,7 +53,7 @@ The benchmark uses 103 of the 118 evaluation examples. See [BENCHMARK_METHODOLOG
 - A `parent_asin` appears in only one split.
 - All variants and evidence for a product stay in that split.
 - Model-visible identifiers are excluded unless required by the task.
-- `scripts/validate_dataset.py` checks message structure, uniqueness, distributions, and overlap, including zero product overlap between the 731-row v2 training file and both the evaluation export and the 103 benchmark cases.
+- `scripts/results/validate_dataset.py` checks message structure, uniqueness, distributions, and overlap, including zero product overlap between the 731-row v2 training file and both the evaluation export and the 103 benchmark cases.
 
 ## Risks
 

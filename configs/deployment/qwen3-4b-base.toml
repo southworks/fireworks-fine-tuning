@@ -1,5 +1,5 @@
 # Qwen3-4B without fine-tuning, used as the baseline in the benchmarks.
-# Used by: make deploy-base-model  ->  scripts/deploy_model.py
+# Used by: make deploy-base-model  ->  scripts/fireworks/deploy_model.py
 name                 = "qwen3-4b-base"                       # deployment ID
 strategy             = "dedicated"                           # one deployment serving one model
 model                = "accounts/fireworks/models/qwen3-4b"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Upload a chat-format JSONL file as a Fireworks dataset.
 
-  python3 scripts/upload_dataset.py --name amazon-reviews-train --path data/dataset/fireworks_v2_training.jsonl
+  python3 scripts/fireworks/upload_dataset.py --name amazon-reviews-train --path data/dataset/fireworks_v2_training.jsonl
 
 The file is checked locally first (valid JSON, a `messages` list with an assistant turn).
 Fixed names: if the dataset already exists the script stops, unless --force deletes it first.
@@ -12,7 +12,15 @@ from __future__ import annotations
 import argparse
 import json
 
-from common import ROOT, firectl, load_env, replace_or_fail, fail
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # make scripts/ importable
+
+from common.cli import fail
+from common.config import load_env
+from common.paths import ROOT
+from fireworks.cli import firectl, replace_or_fail
 
 
 def check_file(path) -> int:

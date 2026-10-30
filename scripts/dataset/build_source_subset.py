@@ -30,7 +30,7 @@ PROGRESS_EVERY = 100_000
 
 
 def parse_args() -> argparse.Namespace:
-    project_dir = Path(__file__).resolve().parents[1]
+    project_dir = Path(__file__).resolve().parents[2]
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--source-plan",

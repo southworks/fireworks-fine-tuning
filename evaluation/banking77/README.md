@@ -56,7 +56,6 @@ Historical Fireworks jobs on this data (records in `records/fireworks/`):
 `configs/training/banking77.toml` uses the same recipe; the pipeline below trains and benchmarks it.
 
 ```bash
-make deploy-foundry-models                  # GPT-5 in Foundry
 make upload-dataset-banking77               # banking77-train + banking77-eval
 make train-model-banking77 DRY_RUN=1        # inspect the firectl request
 make train-model-banking77                  # same recipe as n3gtjgd9 (~2-2.5 h); waits for the job
@@ -66,5 +65,5 @@ make exec-benchmark-banking77 LIMIT=200     # base and GPT-5 get the 77-label li
 make undeploy
 ```
 
-Scoring (`scripts/banking77.py score`) maps each answer to one of the 77 labels (exact, case-insensitive,
+Scoring (`scripts/benchmark/banking77.py score`) maps each answer to one of the 77 labels (exact, case-insensitive,
 or a label embedded in a short sentence); anything else counts as an invalid output and as an error.

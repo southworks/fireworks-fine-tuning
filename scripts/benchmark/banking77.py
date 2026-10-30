@@ -2,8 +2,8 @@
 """Banking77 intent classification: build the generative benchmark and score predictions.
 
 Standard library only. Inference itself reuses the shared runners:
-  Fireworks models -> scripts/benchmark.py run
-  Foundry models   -> scripts/foundry_models.py generate
+  Fireworks models -> scripts/fireworks/inference.py
+  Foundry models   -> scripts/foundry/inference.py
 
 Commands
   prepare-test  Convert data/banking77/test.jsonl (chat SFT rows) into benchmark rows
@@ -22,7 +22,7 @@ import statistics
 from collections import Counter
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data" / "banking77"
 GPT_SYSTEM_PROMPT = (
     "Classify the banking customer query into exactly one Banking77 intent. "

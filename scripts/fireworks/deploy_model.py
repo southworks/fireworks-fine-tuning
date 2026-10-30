@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Create a Fireworks on-demand deployment from a TOML config.
 
-  python3 scripts/deploy_model.py --config configs/deployment/qwen3-4b-base.toml
+  python3 scripts/fireworks/deploy_model.py --config configs/deployment/qwen3-4b-base.toml
 
 Two strategies (config `strategy`):
   dedicated  one deployment serving `model` (a base model, or a fine-tuned LoRA merged live)
@@ -20,7 +20,14 @@ from __future__ import annotations
 
 import argparse
 
-from common import deployment_path, exists, fail, firectl, load_config, load_env, model_path, replace_or_fail, require
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # make scripts/ importable
+
+from common.cli import fail
+from common.config import load_config, load_env, require
+from fireworks.cli import deployment_path, exists, firectl, model_path, replace_or_fail
 
 OPTIONAL = {  # config key -> firectl deployment create flag
     "display_name": "--display-name",

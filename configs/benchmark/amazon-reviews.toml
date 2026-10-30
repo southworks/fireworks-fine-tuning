@@ -1,5 +1,4 @@
 # Benchmark: Qwen3-4B base vs fine-tuned vs GPT-5 + blind GPT-6 Sol judge.
-# Used by: make exec-benchmark-amazon-reviews  ->  scripts/run_benchmark.py
 task       = "amazon"
 test       = "evaluation/qwen3-4b-amazon-v2/test_evaluation_103.jsonl"
 limit      = 103                     # override with LIMIT=10
@@ -22,10 +21,10 @@ max_tokens = 500
 [[models]]
 label      = "gpt5"
 provider   = "foundry"
-deployment = "gpt-5"
+deployment = "${FOUNDRY_GPT5_DEPLOYMENT}"
 max_tokens = 8000                  # includes hidden reasoning tokens
 
 [judge]
 name       = "gpt6sol_with_gpt5"
-deployment = "gpt-6-sol"
+deployment = "${FOUNDRY_GPT6_SOL_DEPLOYMENT}"
 candidates = ["qwen3_4b_base", "qwen3_4b_finetuned", "gpt5"]

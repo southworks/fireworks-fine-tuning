@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Mode 1: show the results from the published data and metrics (offline, no credentials).
 
-  python3 scripts/show_results.py [--quick]
+  python3 scripts/results/show_results.py [--quick]
 
 Steps: validate the data and Fireworks records, recompute every metric from the published
 answers and compare byte-for-byte, check RESULTS.md is current, print the Amazon results,
@@ -14,9 +14,14 @@ import argparse
 import filecmp
 import re
 import tempfile
+
+import sys
 from pathlib import Path
 
-from common import ROOT, py
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # make scripts/ importable
+
+from common.cli import py
+from common.paths import ROOT
 
 EVAL = ROOT / "evaluation" / "qwen3-4b-amazon-v2"
 
@@ -37,21 +42,21 @@ def main() -> None:
     args = parser.parse_args()
 
     title("1. Data: validated, leakage-free and traceable to the Fireworks job")
-    py("validate_dataset.py")
-    py("generate_checksums.py", "--check", str(ROOT / "CHECKSUMS.sha256"))
+    py("results/validate_dataset.py")
+    py("results/generate_checksums.py", "--check", str(ROOT / "CHECKSUMS.sha256"))
 
     title("2. Metrics recomputed from the raw answers")
     predictions = [str(p) for p in sorted(EVAL.glob("predictions_*.jsonl"))]
     with tempfile.TemporaryDirectory() as tmp:
         decisions, overlap = Path(tmp) / "decision.json", Path(tmp) / "overlap.json"
-        py("decision_metrics.py", "--test", str(EVAL / "test_evaluation_103.jsonl"), "--predictions", *predictions, "--output", str(decisions), "--table")
-        py("benchmark.py", "summarize", "--predictions", *predictions, "--output", str(overlap), quiet=True)
+        py("benchmark/decision_metrics.py", "--test", str(EVAL / "test_evaluation_103.jsonl"), "--predictions", *predictions, "--output", str(decisions), "--table")
+        py("benchmark/overlap_metrics.py", "--predictions", *predictions, "--output", str(overlap), quiet=True)
         same = filecmp.cmp(decisions, EVAL / "decision_metrics_all_models.json", shallow=False) and \
             filecmp.cmp(overlap, EVAL / "metrics_all_models.json", shallow=False)
     if not same:
         raise SystemExit("MISMATCH between recomputed and published metrics")
     print("Recomputed metrics match the published files.")
-    py("build_report.py", "--check")
+    py("benchmark/build_report.py", "--check")
 
     title("3. Amazon purchasing copilot: fine-tuned Qwen3-4B vs GPT-4.1 mini vs GPT-5 (103 cases)")
     print(section(EVAL / "RESULTS.md", "## 1.", "## 2."))
@@ -59,7 +64,7 @@ def main() -> None:
 
     if not args.quick:
         title("4. What the answers look like")
-        py("show_cases.py")
+        py("results/show_cases.py")
 
     title("5. Banking77 intent classification (frozen results)")
     print(section(ROOT / "evaluation" / "banking77" / "README.md", "## Frozen results", "Training cost"))

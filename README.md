@@ -120,7 +120,8 @@ learns the task, so training is fast and the result can share a GPU with other a
 | **Training time · cost** | 9 min · ~USD 0.86 | 4.1 h on a laptop (Fireworks job: ~2.5 h · ~USD 0.77) |
 | **Recipe in this repo** | `configs/training/amazon-reviews.toml` | `configs/training/banking77.toml` |
 
-Each training run is recorded (job, model and dataset metadata) in `records/fireworks/`; the
+The Fireworks records of the published training jobs (job, model and dataset metadata) are in
+`records/fireworks/`, and every new training run saves its own in `evaluation/reruns/training/`; the
 [fine-tuning record](docs/FINETUNING.md) lists every parameter, and the
 [Fireworks workflow](docs/FIREWORKS_WORKFLOW.md) shows the `firectl` commands from upload to deployment.
 
@@ -146,7 +147,7 @@ Works on macOS, Linux and Windows. Every command below is the same on all of the
 | To... | You need |
 |---|---|
 | See the results (step 1) | [Python](https://www.python.org/downloads/) 3.10+, [Git](https://git-scm.com/downloads) and GNU Make (on Windows, from WSL or Git Bash) |
-| Run the process (step 2) | Also: a [Fireworks AI](https://fireworks.ai) account with an API key and [`firectl`](https://docs.fireworks.ai/tools-sdks/firectl/firectl); an Azure subscription with a [Microsoft Foundry](https://learn.microsoft.com/azure/ai-foundry/) resource and the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) |
+| Run the process (step 2) | Also: a [Fireworks AI](https://fireworks.ai) account with an API key and [`firectl`](https://docs.fireworks.ai/tools-sdks/firectl/firectl); a [Microsoft Foundry](https://learn.microsoft.com/azure/ai-foundry/) resource with two model deployments already created: **GPT-5** (baseline) and **GPT-6 Sol** (judge) |
 
 No Python packages are needed: the scripts use only the standard library. If your Python command is
 `python` or `py` rather than `python3`, add it to any make command, e.g. `make results PY=python`.
@@ -164,12 +165,13 @@ and a few answers side by side.
 
 ### 2. Run the process yourself (Fireworks + Microsoft Foundry)
 
-1. Sign in: `az login` (and `firectl signin`, or put the API key in `.env`).
-2. Copy `.env.example` to `.env` and fill in the keys and resource names.
-3. Run the processes, one by one or all together with `make pipeline`:
+1. Copy `.env.example` to `.env` and fill in:
+   - the Fireworks API key (or run `firectl signin` instead);
+   - the Foundry endpoint and key;
+   - the names of your GPT-5 and GPT-6 Sol deployments in Foundry (`FOUNDRY_GPT5_DEPLOYMENT`, `FOUNDRY_GPT6_SOL_DEPLOYMENT`).
+2. Run the processes, one by one or all together with `make pipeline`:
 
 ```bash
-make deploy-foundry-models    # GPT-5 (baseline) and GPT-6 Sol (judge) on Microsoft Foundry
 make upload-datasets          # training data -> Fireworks
 make train-models             # fine-tune Qwen3-4B (Amazon ~10 min, Banking77 ~2.5 h)
 make deploy-models            # base model + fine-tuned models on Fireworks (scale to zero when idle)
@@ -180,13 +182,13 @@ make undeploy                 # delete the Fireworks deployments
 Each process also exists per use case, so one case can run on its own. For example, Banking77 only:
 
 ```bash
-make deploy-foundry-models upload-dataset-banking77 train-model-banking77
+make upload-dataset-banking77 train-model-banking77
 make deploy-base-model deploy-ft-model-banking77 exec-benchmark-banking77 undeploy
 ```
 
 | Option | Example | Effect |
 |---|---|---|
-| `DRY_RUN=1` | `make train-models DRY_RUN=1` | Print the exact `firectl` / `az` commands without running them |
+| `DRY_RUN=1` | `make train-models DRY_RUN=1` | Print the exact `firectl` commands without running them |
 | `LIMIT=n` | `make exec-benchmark LIMIT=10` | Benchmark a sample instead of the full test set |
 | `FORCE=1` | `make upload-datasets FORCE=1` | Replace a Fireworks resource that already exists |
 
@@ -199,17 +201,17 @@ the published ones.
 
 ```mermaid
 flowchart LR
-    A[Training data<br/>data/] -->|upload_dataset.py| B[Fireworks dataset]
-    B -->|train_model.py<br/>configs/training| C[Fine-tuned LoRA model]
-    C -->|deploy_model.py<br/>configs/deployment| D[Fireworks deployment]
-    E[GPT-5 / GPT-6 Sol<br/>configs/foundry] -->|deploy_foundry.py| F[Microsoft Foundry]
-    D --> G[run_benchmark.py<br/>configs/benchmark]
+    A[Training data<br/>data/] -->|fireworks/upload_dataset.py| B[Fireworks dataset]
+    B -->|fireworks/train_model.py<br/>configs/training| C[Fine-tuned LoRA model]
+    C -->|fireworks/deploy_model.py<br/>configs/deployment| D[Fireworks deployment]
+    F[Microsoft Foundry<br/>GPT-5 / GPT-6 Sol]
+    D --> G[benchmark/run_benchmark.py<br/>configs/benchmark]
     F --> G
     G --> H[Results<br/>evaluation/reruns]
 ```
 
 Every step is a small Python script driven by a config file. The scripts call the official CLIs
-(`firectl`, `az`) and print each command, so they double as a reference for doing the same by hand.
+(`firectl`) and print each command, so they double as a reference for doing the same by hand.
 To adapt the study to a new use case, add a dataset and copy the config files.
 
 | To change... | Edit |
@@ -217,7 +219,6 @@ To adapt the study to a new use case, add a dataset and copy the config files.
 | Training recipe (epochs, learning rate, LoRA rank...) | `configs/training/*.toml` |
 | Hardware and scaling | `configs/deployment/*.toml` |
 | Models compared, test set, judge | `configs/benchmark/*.toml` |
-| Foundry models and capacity | `configs/foundry/models.toml` |
 
 ---
 
@@ -225,7 +226,7 @@ To adapt the study to a new use case, add a dataset and copy the config files.
 
 ```text
 ├── Makefile                  entry point: make results, make <process>
-├── configs/                  training, deployment, Foundry and benchmark settings (TOML)
+├── configs/                  training, deployment and benchmark settings (TOML)
 ├── data/
 │   ├── dataset/              Amazon purchasing-copilot data (fireworks_v2_training.jsonl = published model's training set)
 │   ├── source/               product selection used to build it from Amazon Reviews 2023
@@ -233,8 +234,14 @@ To adapt the study to a new use case, add a dataset and copy the config files.
 ├── evaluation/
 │   ├── qwen3-4b-amazon-v2/   published benchmark: test cases, every model's answers, judge scores, RESULTS.md
 │   └── banking77/            Banking77 results
-├── records/fireworks/        Fireworks records of the training jobs, models and datasets
-├── scripts/                  one script per process + validation, metrics and report tools
+├── records/fireworks/        Fireworks records of the jobs, models and datasets behind the published results
+├── scripts/
+│   ├── dataset/              Amazon dataset generation (source selection, example generation and audit)
+│   ├── fireworks/            Fireworks AI: upload, train, deploy, undeploy, inference
+│   ├── foundry/              Microsoft Foundry: client and inference
+│   ├── benchmark/            benchmark runner, judge, metrics, reports, Banking77 scoring
+│   ├── results/              make results: validation, checksums, side-by-side cases
+│   └── common/               shared helpers (paths, .env and TOML configs, commands, JSONL)
 └── docs/                     explanations (see below)
 ```
 
@@ -261,7 +268,7 @@ To adapt the study to a new use case, add a dataset and copy the config files.
 - **Amazon Reviews 2023** (Industrial & Scientific), McAuley Lab —
   [project](https://amazon-reviews-2023.github.io/) · [paper](https://arxiv.org/abs/2403.03952).
   The repository contains derived examples; the raw reviews are downloaded from the source by
-  `scripts/build_source_subset.py`. Product names, reviews and trademarks belong to their owners.
+  `scripts/dataset/build_source_subset.py`. Product names, reviews and trademarks belong to their owners.
 - **Banking77**, PolyAI — [dataset](https://huggingface.co/datasets/PolyAI/banking77) ·
   [paper](https://arxiv.org/abs/2003.04807), CC BY 4.0. Converted to chat format; validation is a stratified
   10% of the training split (seed 42).

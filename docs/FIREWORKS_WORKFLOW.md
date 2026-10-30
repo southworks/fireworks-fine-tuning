@@ -40,7 +40,7 @@ firectl sftj create --base-model accounts/fireworks/models/qwen3-4b \
   --epochs 1 --learning-rate 0.0001 --learning-rate-scheduler constant --lora-rank 8 \
   --batch-size-samples 8 --max-context-length 32768
 firectl sftj get ft-qwen3-4b-amazon-reviews -o json      # polled until JOB_STATE_COMPLETED
-firectl model get ft-qwen3-4b-amazon-reviews -o json     # saved to records/fireworks/
+firectl model get ft-qwen3-4b-amazon-reviews -o json     # saved to evaluation/reruns/training/
 ```
 
 | Config key | firectl flag |

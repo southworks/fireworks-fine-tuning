@@ -1,10 +1,10 @@
-# Banking77 intent classification — same recipe as the published job n3gtjgd9 (ft-qwen3-4b-banking-validation).
+# Banking77 intent classificationß
 name               = "ft-qwen3-4b-banking77"
 base_model         = "accounts/fireworks/models/qwen3-4b"
 dataset            = "banking77-train"
 eval_dataset       = "banking77-eval"                        # held-out loss during training
 method             = "sft"
-epochs             = 3
+epochs             = 2
 learning_rate      = 0.0001
 lr_scheduler       = "constant"
 lora_rank          = 8

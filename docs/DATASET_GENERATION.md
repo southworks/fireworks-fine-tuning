@@ -30,11 +30,11 @@ Generation follows [DATASET_REVIEW_RULES.md](DATASET_REVIEW_RULES.md). The four 
 ## Commands
 
 ```bash
-python3 scripts/build_source_subset.py
+python3 scripts/dataset/build_source_subset.py
 
 export FOUNDRY_BASE_URL='https://YOUR-RESOURCE.services.ai.azure.com/openai/v1'
 export FOUNDRY_API_KEY='...'
-python3 scripts/generate_sft_dataset.py \
+python3 scripts/dataset/generate_sft_dataset.py \
   --data-dir data/source/raw \
   --output-dir data/generated \
   --examples 50 \

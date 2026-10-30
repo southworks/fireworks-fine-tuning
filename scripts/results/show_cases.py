@@ -14,7 +14,7 @@ import re
 import textwrap
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 EVAL = ROOT / "evaluation" / "qwen3-4b-amazon-v2"
 FILES = {
     "Qwen3-4B FT v2": "predictions_qwen3_4b_finetuned.jsonl",

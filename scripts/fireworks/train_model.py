@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Run a supervised fine-tuning job on Fireworks from a TOML config.
 
-  python3 scripts/train_model.py --config configs/training/amazon-reviews.toml
+  python3 scripts/fireworks/train_model.py --config configs/training/amazon-reviews.toml
 
 The job ID and the output model use the config `name`. Fixed names: if the model or the job
 already exists the script stops, unless --force deletes them first (a deployed model must be
 undeployed before it can be deleted). By default it waits for the job and then saves the job
-and model records to records/fireworks/ (signed URLs redacted).
+and model records to evaluation/reruns/training/ (signed URLs redacted).
 """
 
 from __future__ import annotations
@@ -14,7 +14,14 @@ from __future__ import annotations
 import argparse
 import time
 
-from common import firectl, firectl_json, exists, fail, load_config, load_env, model_path, replace_or_fail, require, save_record
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # make scripts/ importable
+
+from common.cli import fail
+from common.config import load_config, load_env, require
+from fireworks.cli import exists, firectl, firectl_json, model_path, replace_or_fail, save_record
 
 FLAGS = {  # config key -> firectl sftj create flag
     "eval_dataset": "--evaluation-dataset",

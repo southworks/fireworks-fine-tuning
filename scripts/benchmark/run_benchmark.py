@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run a benchmark defined in a TOML config: generate answers for every model, judge, score, report.
 
-  python3 scripts/run_benchmark.py --config configs/benchmark/amazon-reviews.toml [--limit 10]
+  python3 scripts/benchmark/run_benchmark.py --config configs/benchmark/amazon-reviews.toml [--limit 10]
 
 Fireworks models are addressed by deployment name (and fine-tuned model name for LoRA adapters);
 Foundry models by deployment name. Each model step resumes completed rows and retries failed ones
@@ -15,9 +15,16 @@ import argparse
 import json
 import shutil
 import time
+
+import sys
 from pathlib import Path
 
-from common import ROOT, deployment_path, env, fail, load_config, load_env, model_path, py, require
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # make scripts/ importable
+
+from common.cli import fail, py
+from common.config import env, load_config, load_env, require
+from common.paths import ROOT
+from fireworks.cli import deployment_path, model_path
 
 
 def read_ids(path: Path, ok_only: bool = False) -> set[str]:
@@ -33,8 +40,8 @@ def prepare(config: dict, out: Path, limit: int) -> dict[str, Path]:
     tests = {"default": out / "test.jsonl"}
     if config["task"] == "banking77":
         tests["label_list"] = out / "test_label_list.jsonl"
-        py("banking77.py", "prepare-test", "--source", config["test"], "--output", str(tests["default"]), "--limit", str(limit), quiet=True)
-        py("banking77.py", "prepare-test", "--source", config["test"], "--output", str(tests["label_list"]), "--label-list", "--limit", str(limit), quiet=True)
+        py("benchmark/banking77.py", "prepare-test", "--source", config["test"], "--output", str(tests["default"]), "--limit", str(limit), quiet=True)
+        py("benchmark/banking77.py", "prepare-test", "--source", config["test"], "--output", str(tests["label_list"]), "--label-list", "--limit", str(limit), quiet=True)
     else:
         with (ROOT / config["test"]).open(encoding="utf-8") as source:
             rows = [line for line in source if line.strip()][:limit]
@@ -51,11 +58,11 @@ def generate(model: dict, test: Path, output: Path, workers: int, dry_run: bool)
         target = deployment_path(model["deployment"])
         if model.get("model"):
             target = f"{model_path(model['model'])}#{target}"
-        command = ("benchmark.py", "run", "--test", str(test), "--output", str(output), "--model", target,
+        command = ("fireworks/inference.py", "--test", str(test), "--output", str(output), "--model", target,
                    "--reasoning-effort", "none", "--max-tokens", str(model.get("max_tokens", 500)),
                    "--workers", str(workers), "--resume")
     elif model["provider"] == "foundry":
-        command = ("foundry_models.py", "generate", "--test", str(test), "--output", str(output),
+        command = ("foundry/inference.py", "--test", str(test), "--output", str(output),
                    "--model", model["deployment"], "--max-output-tokens", str(model.get("max_tokens", 500)),
                    "--workers", str(workers), "--resume")
         if model.get("temperature") is not None:
@@ -109,22 +116,22 @@ def main() -> None:
         files = [str(out / f"predictions_{label}.jsonl") for label in judge["candidates"]]
         output = out / f"judgments_{judge['name']}.jsonl"
         for attempt in range(1, 4):
-            py("foundry_models.py", "judge", "--test", str(tests["default"]), "--predictions", *files,
+            py("benchmark/judge.py", "judge", "--test", str(tests["default"]), "--predictions", *files,
                "--output", str(output), "--model", judge["deployment"], "--workers", "3", "--resume", dry_run=args.dry_run, check=False)
             if args.dry_run or read_ids(output, ok_only=False) >= read_ids(tests["default"]):
                 break
-        py("foundry_models.py", "summarize", "--judgments", str(output), "--output", str(out / f"judge_summary_{judge['name']}.json"), dry_run=args.dry_run, quiet=True)
+        py("benchmark/judge.py", "summarize", "--judgments", str(output), "--output", str(out / f"judge_summary_{judge['name']}.json"), dry_run=args.dry_run, quiet=True)
 
     if args.dry_run:
         return
     predictions = [str(p) for p in sorted(out.glob("predictions_*.jsonl"))]
     if config["task"] == "banking77":
-        py("banking77.py", "score", "--predictions", *predictions, "--output", str(out / "metrics.json"))
+        py("benchmark/banking77.py", "score", "--predictions", *predictions, "--output", str(out / "metrics.json"))
     else:
-        py("decision_metrics.py", "--test", str(tests["default"]), "--predictions", *predictions,
+        py("benchmark/decision_metrics.py", "--test", str(tests["default"]), "--predictions", *predictions,
            "--output", str(out / "decision_metrics_all_models.json"), "--table")
-        py("benchmark.py", "summarize", "--predictions", *predictions, "--output", str(out / "metrics_all_models.json"), quiet=True)
-        py("build_report.py", "--dir", str(out), quiet=True)
+        py("benchmark/overlap_metrics.py", "--predictions", *predictions, "--output", str(out / "metrics_all_models.json"), quiet=True)
+        py("benchmark/build_report.py", "--dir", str(out), quiet=True)
     print(f"\nResults: {out.relative_to(ROOT)}/")
 
 

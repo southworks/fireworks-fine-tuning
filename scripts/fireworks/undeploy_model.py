@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
 """Delete Fireworks deployments created from deployment configs (stops GPU billing).
 
-  python3 scripts/undeploy_model.py --config configs/deployment/qwen3-4b-base.toml
-  python3 scripts/undeploy_model.py --all          # every config in configs/deployment/
+  python3 scripts/fireworks/undeploy_model.py --config configs/deployment/qwen3-4b-base.toml
+  python3 scripts/fireworks/undeploy_model.py --all          # every config in configs/deployment/
 """
 
 from __future__ import annotations
 
 import argparse
 
-from common import ROOT, exists, firectl, load_config, load_env
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # make scripts/ importable
+
+from common.config import load_config, load_env
+from common.paths import ROOT
+from fireworks.cli import exists, firectl
 
 
 def main() -> None:

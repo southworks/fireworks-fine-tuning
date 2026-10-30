@@ -9,7 +9,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data" / "dataset"
 EVAL = ROOT / "evaluation" / "qwen3-4b-amazon-v2"
 BANKING = ROOT / "data" / "banking77"

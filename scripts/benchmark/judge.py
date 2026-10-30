@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-"""Run Microsoft Foundry (Azure OpenAI Responses API) models and judge benchmark outputs.
+"""Blind LLM judge: score three anonymized answers per case on Microsoft Foundry, and aggregate the scores.
 
-Environment (never written to disk):
-  FOUNDRY_BASE_URL   e.g. https://<resource>.services.ai.azure.com/openai/v1
-  FOUNDRY_API_KEY    Foundry key (AZURE_AI_API_KEY is accepted as a fallback)
-
-The Responses endpoint defaults to $FOUNDRY_BASE_URL/responses; override with --endpoint.
+  python3 scripts/benchmark/judge.py judge --test <test.jsonl> --predictions <a> <b> <c> --output <judgments.jsonl> --model <deployment>
+  python3 scripts/benchmark/judge.py summarize --judgments <judgments.jsonl> --output <judge_summary.json>
 """
 
 from __future__ import annotations
@@ -13,123 +10,21 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import json
-import os
 import random
 import statistics
 import time
-import urllib.error
-import urllib.request
 from collections import Counter, defaultdict
-from pathlib import Path
 from typing import Any
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # make scripts/ importable
+
+from common.jsonl import read_jsonl, write_jsonl
+from foundry.client import foundry_endpoint, foundry_key, post_responses
 
 DECISIONS = ["BUY", "CONDITIONAL_BUY", "DO_NOT_BUY", "INSUFFICIENT_EVIDENCE", "UNDETERMINED"]
-
-
-def read_jsonl(path: Path):
-    with path.open(encoding="utf-8") as handle:
-        for line in handle:
-            if line.strip():
-                yield json.loads(line)
-
-
-def write_jsonl(path: Path, rows) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as handle:
-        for row in rows:
-            handle.write(json.dumps(row, ensure_ascii=False) + "\n")
-
-
-def response_text(body: dict[str, Any]) -> str:
-    if body.get("output_text"):
-        return body["output_text"]
-    parts = []
-    for item in body.get("output", []):
-        if item.get("type") == "message":
-            for content in item.get("content", []):
-                if content.get("type") in {"output_text", "text"}:
-                    parts.append(content.get("text", ""))
-    return "".join(parts)
-
-
-def post_responses(endpoint: str, api_key: str, payload: dict[str, Any], retries: int = 6) -> tuple[str, dict, dict]:
-    data = json.dumps(payload).encode("utf-8")
-    headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "api-key": api_key,
-        "Authorization": f"Bearer {api_key}",
-    }
-    for attempt in range(retries + 1):
-        request = urllib.request.Request(endpoint, data=data, headers=headers, method="POST")
-        try:
-            with urllib.request.urlopen(request, timeout=180) as response:
-                body = json.loads(response.read().decode("utf-8"))
-            return response_text(body), body.get("usage", {}), body
-        except urllib.error.HTTPError as exc:
-            message = exc.read().decode("utf-8", errors="replace")
-            if exc.code not in {408, 409, 429, 500, 502, 503, 504} or attempt == retries:
-                raise RuntimeError(f"Foundry HTTP {exc.code}: {message[:1000]}") from exc
-        except (urllib.error.URLError, TimeoutError) as exc:
-            if attempt == retries:
-                raise RuntimeError(f"Foundry request failed: {exc}") from exc
-        time.sleep(min(2**attempt, 30))
-    raise RuntimeError("Foundry request failed")
-
-
-def foundry_key() -> str:
-    key = os.environ.get("FOUNDRY_API_KEY") or os.environ.get("AZURE_AI_API_KEY")
-    if not key:
-        raise SystemExit("Set FOUNDRY_API_KEY; the key is never written to disk.")
-    return key
-
-
-def foundry_endpoint(value: str | None) -> str:
-    if value:
-        return value
-    base = os.environ.get("FOUNDRY_BASE_URL")
-    if not base:
-        raise SystemExit("Set FOUNDRY_BASE_URL or pass --endpoint.")
-    return base.rstrip("/") + "/responses"
-
-
-def run_generation(test: Path, output: Path, endpoint: str, model: str, workers: int, resume: bool, limit: int | None, max_output_tokens: int, temperature: float | None) -> None:
-    key = foundry_key()
-    rows = list(read_jsonl(test))
-    if limit:
-        rows = rows[:limit]
-    retained = {}
-    if resume and output.exists():
-        retained = {row["id"]: row for row in read_jsonl(output) if not row.get("error")}
-        rows = [row for row in rows if row["id"] not in retained]
-        print(f"Resuming: retained {len(retained)}; retrying {len(rows)}", flush=True)
-
-    def execute(row):
-        started = time.monotonic()
-        payload = {
-            "model": model,
-            "input": row["messages"],
-            "max_output_tokens": max_output_tokens,
-            "store": False,
-        }
-        if temperature is not None:
-            payload["temperature"] = temperature
-        try:
-            prediction, usage, _ = post_responses(endpoint, key, payload)
-            return {**row, "model": model, "prediction": prediction, "usage": usage, "latency_seconds": round(time.monotonic() - started, 3), "error": None}
-        except Exception as exc:
-            return {**row, "model": model, "prediction": "", "usage": {}, "latency_seconds": round(time.monotonic() - started, 3), "error": str(exc)}
-
-    results = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
-        futures = {executor.submit(execute, row): row["id"] for row in rows}
-        for index, future in enumerate(concurrent.futures.as_completed(futures), 1):
-            results.append(future.result())
-            print(f"[{index}/{len(rows)}] {futures[future]}", flush=True)
-    results.extend(retained.values())
-    results.sort(key=lambda row: (row["task"], row["id"]))
-    write_jsonl(output, results)
 
 
 def score_schema() -> dict[str, Any]:
@@ -280,24 +175,14 @@ def summarize_judgments(judgments: Path, output: Path) -> dict[str, Any]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="command", required=True)
-    generate = sub.add_parser("generate")
-    generate.add_argument("--test", type=Path, required=True)
-    generate.add_argument("--output", type=Path, required=True)
-    generate.add_argument("--endpoint")
-    generate.add_argument("--model", required=True)
-    generate.add_argument("--workers", type=int, default=4)
-    generate.add_argument("--resume", action="store_true")
-    generate.add_argument("--limit", type=int)
-    generate.add_argument("--max-output-tokens", type=int, default=500)
-    generate.add_argument("--temperature", type=float)
     judge = sub.add_parser("judge")
     judge.add_argument("--test", type=Path, required=True)
     judge.add_argument("--predictions", type=Path, nargs=3, required=True)
     judge.add_argument("--output", type=Path, required=True)
     judge.add_argument("--endpoint")
-    judge.add_argument("--model", required=True)
+    judge.add_argument("--model", required=True, help="Foundry deployment name of the judge")
     judge.add_argument("--workers", type=int, default=3)
     judge.add_argument("--resume", action="store_true")
     judge.add_argument("--limit", type=int)
@@ -305,9 +190,7 @@ def main() -> None:
     summary.add_argument("--judgments", type=Path, required=True)
     summary.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    if args.command == "generate":
-        run_generation(args.test, args.output, foundry_endpoint(args.endpoint), args.model, args.workers, args.resume, args.limit, args.max_output_tokens, args.temperature)
-    elif args.command == "judge":
+    if args.command == "judge":
         run_judge(args.test, args.predictions, args.output, foundry_endpoint(args.endpoint), args.model, args.workers, args.resume, args.limit)
     else:
         print(json.dumps(summarize_judgments(args.judgments, args.output), indent=2))

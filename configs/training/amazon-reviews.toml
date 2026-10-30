@@ -1,10 +1,9 @@
-# Amazon MRO purchasing copilot — same recipe as the published job o9pa8ud2 (ft-qwen3-4b-amazon-v2).
-# Used by: make train-model-amazon-reviews  ->  scripts/train_model.py
+# Amazon reviews purchasing copilot
 name               = "ft-qwen3-4b-amazon-reviews"            # output model and job ID
 base_model         = "accounts/fireworks/models/qwen3-4b"
 dataset            = "amazon-reviews-train"                  # uploaded by make upload-dataset-amazon-reviews
 method             = "sft"                                   # supervised fine-tuning (firectl sftj)
-epochs             = 1
+epochs             = 2
 learning_rate      = 0.0001
 lr_scheduler       = "constant"
 lora_rank          = 8

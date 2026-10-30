@@ -34,7 +34,7 @@ Accuracy, Macro-F1, Weighted-F1, per-class metrics, and confusion matrices are c
 
 ## Blinded LLM judge
 
-GPT-6 Sol evaluated anonymized answers as A/B/C. Alias order is shuffled per case with a deterministic seed. The judge prompt and JSON schema are in `scripts/foundry_models.py` (`JUDGE_INSTRUCTIONS`, `score_schema`).
+GPT-6 Sol evaluated anonymized answers as A/B/C. Alias order is shuffled per case with a deterministic seed. The judge prompt and JSON schema are in `scripts/benchmark/judge.py` (`JUDGE_INSTRUCTIONS`, `score_schema`).
 
 Two sessions were run, each with three candidates: **A** = base, fine-tuned, GPT-4.1 mini (`judgments_gpt6sol.jsonl`); **B** = base, fine-tuned, GPT-5 (`judgments_gpt6sol_with_gpt5.jsonl`). Scores are relative to the other candidates in the same session and must not be compared across sessions. It scored grounding, evidence coverage, rule compliance, severity calibration, catalog/user separation, actionability, unsupported claims, critical errors, overall quality, and relative preference.
 
@@ -44,9 +44,11 @@ The judge is not ground truth. Its primary value is a consistent comparative rub
 
 | Step | Script |
 |---|---|
-| Fireworks inference, reference-overlap metrics | `scripts/benchmark.py run` / `summarize` |
-| Foundry inference (GPT-4.1 mini, GPT-5), judge, judge aggregation | `scripts/foundry_models.py generate` / `judge` / `summarize` |
-| Label extraction, accuracy, F1, confusion matrices | `scripts/decision_metrics.py` |
-| Result tables | `scripts/build_report.py` |
+| Fireworks inference | `scripts/fireworks/inference.py` |
+| Foundry inference (GPT-4.1 mini, GPT-5) | `scripts/foundry/inference.py` |
+| Blind judge and judge aggregation | `scripts/benchmark/judge.py judge` / `summarize` |
+| Reference-overlap metrics (token F1, ROUGE-L) | `scripts/benchmark/overlap_metrics.py` |
+| Label extraction, accuracy, F1, confusion matrices | `scripts/benchmark/decision_metrics.py` |
+| Result tables | `scripts/benchmark/build_report.py` |
 
 The repository publishes every per-case answer and judgment so all aggregates are auditable. Models and keys are supplied through `.env` (see `.env.example`); never commit API keys.

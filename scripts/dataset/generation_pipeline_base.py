@@ -20,7 +20,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_DATA = ROOT / "data" / "source" / "raw"
 DEFAULT_OUTPUT = ROOT / "data" / "generated"
 RULES_FILE = ROOT / "docs" / "DATASET_REVIEW_RULES.md"
