@@ -63,7 +63,7 @@ Hosted model behaviour changes over time; keep model IDs, dates and parameters w
 ## Rebuild the source data and generate examples
 
 ```bash
-python3 scripts/dataset/build_source_subset.py          # downloads the upstream category files into data/source/raw/
+python3 scripts/dataset/build_source_subset.py          # downloads the upstream category files into data/amazon-reviews/source/raw/
 export FOUNDRY_BASE_URL=https://YOUR-RESOURCE.services.ai.azure.com/openai/v1
 export FOUNDRY_API_KEY=...
 python3 scripts/dataset/generate_sft_dataset.py --assistant-model gpt-6-sol

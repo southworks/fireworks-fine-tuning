@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 .env
 .venv/
-data/source/raw/
-data/generated/
+data/amazon-reviews/source/raw/
+data/amazon-reviews/generated/
 evaluation/reruns/
 evaluation/**/reruns/

@@ -14,8 +14,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE_PATH = Path(__file__).with_name("generation_pipeline_base.py")
-DEFAULT_DATA = ROOT / "data" / "source" / "raw"
-DEFAULT_OUTPUT = ROOT / "data" / "generated"
+DEFAULT_DATA = ROOT / "data" / "amazon-reviews" / "source" / "raw"
+DEFAULT_OUTPUT = ROOT / "data" / "amazon-reviews" / "generated"
 VERSION = "single-pass-batched-v1"
 
 

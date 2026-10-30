@@ -10,7 +10,7 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DATA = ROOT / "data" / "dataset"
+DATA = ROOT / "data" / "amazon-reviews" / "dataset"
 EVAL = ROOT / "evaluation" / "qwen3-4b-amazon-v2"
 BANKING = ROOT / "data" / "banking77"
 FIREWORKS = ROOT / "records" / "fireworks"

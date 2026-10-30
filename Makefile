@@ -37,7 +37,7 @@ pipeline:                                ## Mode 2: every process in order, then
 upload-datasets: upload-dataset-amazon-reviews upload-dataset-banking77  ## upload all datasets to Fireworks
 
 upload-dataset-amazon-reviews:           ## Amazon reviews training set
-	$(PY) scripts/fireworks/upload_dataset.py --name amazon-reviews-train --path data/dataset/fireworks_v2_training.jsonl $(FLAGS)
+	$(PY) scripts/fireworks/upload_dataset.py --name amazon-reviews-train --path data/amazon-reviews/dataset/fireworks_v2_training.jsonl $(FLAGS)
 
 upload-dataset-banking77:                ## Banking77 training and evaluation sets
 	$(PY) scripts/fireworks/upload_dataset.py --name banking77-train --path data/banking77/train.jsonl $(FLAGS)

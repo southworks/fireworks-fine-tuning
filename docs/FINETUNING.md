@@ -13,7 +13,7 @@ All values below come from `firectl ... -o json` exports of the real resources, 
 | Base model | `accounts/fireworks/models/qwen3-4b` (Qwen/Qwen3-4B, 4.41B parameters, BF16, tunable) | `model_base_qwen3-4b.json` |
 | Method | LoRA, rank 8, on `q_proj k_proj v_proj o_proj gate_proj up_proj down_proj` | model record |
 | Training dataset | `amazon-reviews-v2-train`: 731 examples, ~1.83M tokens, chat format | `dataset_amazon-reviews-v2-train.json` |
-| Local copy of that dataset | `data/dataset/fireworks_v2_training.jsonl` (SHA-256 `0640754b…8b1e11`) | checked by `scripts/results/validate_dataset.py` |
+| Local copy of that dataset | `data/amazon-reviews/dataset/fireworks_v2_training.jsonl` (SHA-256 `0640754b…8b1e11`) | checked by `scripts/results/validate_dataset.py` |
 | Evaluation during training | none (no evaluation dataset, no auto carve-out) | job record |
 | Epochs | 1 | job record |
 | Learning rate / schedule | 1e-4, constant | job record |

@@ -35,11 +35,11 @@ python3 scripts/dataset/build_source_subset.py
 export FOUNDRY_BASE_URL='https://YOUR-RESOURCE.services.ai.azure.com/openai/v1'
 export FOUNDRY_API_KEY='...'
 python3 scripts/dataset/generate_sft_dataset.py \
-  --data-dir data/source/raw \
-  --output-dir data/generated \
+  --data-dir data/amazon-reviews/source/raw \
+  --output-dir data/amazon-reviews/generated \
   --examples 50 \
   --product-offset 0 \
   --assistant-model gpt-6-sol
 ```
 
-The canonical dataset was assembled from restartable batches. Exact batch offsets, status counts, model mix, and timings are retained in `data/dataset/manifest.json`.
+The canonical dataset was assembled from restartable batches. Exact batch offsets, status counts, model mix, and timings are retained in `data/amazon-reviews/dataset/manifest.json`.

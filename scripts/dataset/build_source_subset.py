@@ -35,12 +35,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--source-plan",
         type=Path,
-        default=project_dir / "data" / "source" / "product_plan.json",
+        default=project_dir / "data" / "amazon-reviews" / "source" / "product_plan.json",
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=project_dir / "data" / "source" / "raw",
+        default=project_dir / "data" / "amazon-reviews" / "source" / "raw",
     )
     parser.add_argument("--tail-products", type=int, default=1_000)
     parser.add_argument("--timeout", type=int, default=180)

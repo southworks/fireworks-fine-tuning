@@ -27,7 +27,7 @@ JSONL, one `{"messages": [...]}` per line (`system`, `user`, `assistant`), 3 to 
 the file locally first.
 
 ```bash
-firectl dataset create amazon-reviews-train data/dataset/fireworks_v2_training.jsonl
+firectl dataset create amazon-reviews-train data/amazon-reviews/dataset/fireworks_v2_training.jsonl
 firectl dataset create banking77-train data/banking77/train.jsonl
 firectl dataset create banking77-eval  data/banking77/validation.jsonl
 ```

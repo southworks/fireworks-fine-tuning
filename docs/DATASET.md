@@ -11,7 +11,7 @@ The experiment uses the `Industrial_and_Scientific` category of Amazon Reviews 2
 - All matching source reviews retained, without per-product review caps or rating filters.
 - Every selected product has metadata and at least three reviews.
 
-The raw source layer is reconstructed using `data/source/product_plan.json`, `data/source/manifest.json`, and `scripts/dataset/build_source_subset.py`.
+The raw source layer is reconstructed using `data/amazon-reviews/source/product_plan.json`, `data/amazon-reviews/source/manifest.json`, and `scripts/dataset/build_source_subset.py`.
 
 ## Canonical derived dataset
 

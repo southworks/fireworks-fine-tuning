@@ -8,7 +8,7 @@ import hashlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-INCLUDED = ("data/banking77", "records", "data/dataset", "data/source", "evaluation/banking77", "evaluation/qwen3-4b-amazon-v2")
+INCLUDED = ("data/banking77", "records", "data/amazon-reviews", "evaluation/banking77", "evaluation/qwen3-4b-amazon-v2")
 
 
 def digest(path: Path) -> str:

@@ -12,7 +12,7 @@ for a specific engagement, plug in the current Fireworks and Microsoft Foundry q
 
 The training run is not the main fixed cost. Data work is: building and auditing the 1,822-example Amazon
 ledger took 21 generation batches, with three model calls (request author, answer, audit) per group of four products (see
-`data/dataset/manifest.json` for timings), plus human review. Budget a project around data and evaluation,
+`data/amazon-reviews/dataset/manifest.json` for timings), plus human review. Budget a project around data and evaluation,
 not GPU time.
 
 ## Variable cost: tokens per request (measured on the 103-case benchmark)

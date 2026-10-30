@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Upload a chat-format JSONL file as a Fireworks dataset.
 
-  python3 scripts/fireworks/upload_dataset.py --name amazon-reviews-train --path data/dataset/fireworks_v2_training.jsonl
+  python3 scripts/fireworks/upload_dataset.py --name amazon-reviews-train --path data/amazon-reviews/dataset/fireworks_v2_training.jsonl
 
 The file is checked locally first (valid JSON, a `messages` list with an assistant turn).
 Fixed names: if the dataset already exists the script stops, unless --force deletes it first.

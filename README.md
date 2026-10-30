@@ -228,8 +228,7 @@ To adapt the study to a new use case, add a dataset and copy the config files.
 ├── Makefile                  entry point: make results, make <process>
 ├── configs/                  training, deployment and benchmark settings (TOML)
 ├── data/
-│   ├── dataset/              Amazon purchasing-copilot data (fireworks_v2_training.jsonl = published model's training set)
-│   ├── source/               product selection used to build it from Amazon Reviews 2023
+│   ├── amazon-reviews/       purchasing-copilot data: dataset/ (training, evaluation, full ledger) and source/ (product selection)
 │   └── banking77/            Banking77 train / validation / test
 ├── evaluation/
 │   ├── qwen3-4b-amazon-v2/   published benchmark: test cases, every model's answers, judge scores, RESULTS.md

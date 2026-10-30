@@ -21,8 +21,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_DATA = ROOT / "data" / "source" / "raw"
-DEFAULT_OUTPUT = ROOT / "data" / "generated"
+DEFAULT_DATA = ROOT / "data" / "amazon-reviews" / "source" / "raw"
+DEFAULT_OUTPUT = ROOT / "data" / "amazon-reviews" / "generated"
 RULES_FILE = ROOT / "docs" / "DATASET_REVIEW_RULES.md"
 PIPELINE_VERSION = "validated-three-model-v2"
 SELECTION_SEED = "validated-sft-pipeline-v2"
