@@ -3,7 +3,7 @@
 
   python3 scripts/benchmark/run_benchmark.py --config configs/benchmark/amazon-reviews.toml [--limit 10]
 
-Fireworks models are addressed by deployment name (and fine-tuned model name for LoRA adapters);
+Fireworks models are addressed by deployment name (plus the model name for fine-tuned models);
 Foundry models by deployment name. Each model step resumes completed rows and retries failed ones
 (3 passes); the run stops if any case is still missing, so reports never use partial answers.
 Results go to the config `output_dir` (git-ignored); published evidence is never touched.

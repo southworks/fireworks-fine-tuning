@@ -15,7 +15,7 @@ max_tokens = 500
 label      = "qwen3_4b_finetuned"
 provider   = "fireworks"
 model      = "ft-qwen3-4b-amazon-reviews"
-deployment = "qwen3-4b-ft-adapters"
+deployment = "qwen3-4b-amazon-reviews"
 max_tokens = 500
 
 [[models]]

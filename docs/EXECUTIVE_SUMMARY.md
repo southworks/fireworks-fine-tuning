@@ -73,9 +73,3 @@ roughly *GPU price per hour ÷ API cost per request*; with the GPT-5 token mix m
 103 test cases from one product category (4 `BUY` references), references written by a large model and
 audited, an automatic judge as a second lens, and latency measured on each provider as used. See
 [SCOPE.md](SCOPE.md).
-
-## Proposed next step with a client
-
-A 4–6 week pilot on one narrow workflow: build a reference set with the client's experts, generate and
-audit training data, fine-tune and deploy on Fireworks, run the same benchmark against the model they use
-today, and decide go/no-go on measured accuracy, latency and cost.

@@ -109,16 +109,16 @@ specialization: a fixed set of labels and an exact answer key.
 ## How we fine-tuned
 
 Supervised fine-tuning with LoRA adapters: the base model stays frozen and a small set of extra weights
-learns the task, so training is fast and the result can share a GPU with other adapters.
+learns the task, so training is fast and cheap.
 
 | | Amazon reviews | Banking77 |
 |---|---|---|
 | **Where** | Fireworks AI (`firectl sftj create`) | Hugging Face Transformers + PEFT (reported results); Fireworks recipe included |
 | **Base model** | Qwen3-4B | Qwen3.5-0.8B, Qwen3-0.6B (Fireworks recipe: Qwen3-4B) |
-| **Examples · epochs** | 731 · 1 | 9,002 · 2 (Fireworks recipe: 3) |
+| **Examples · epochs** | 731 · 1 | 9,002 · 2 (earlier Fireworks jobs: 3) |
 | **LoRA rank · learning rate · batch** | 8 · 1e-4 · 8 | 8 · 1e-4 · 8 |
 | **Training time · cost** | 9 min · ~USD 0.86 | 4.1 h on a laptop (Fireworks job: ~2.5 h · ~USD 0.77) |
-| **Recipe in this repo** | `configs/training/amazon-reviews.toml` | `configs/training/banking77.toml` |
+| **Recipe in this repo** | `configs/training/amazon-reviews.toml` (2 epochs) | `configs/training/banking77.toml` (2 epochs) |
 
 The Fireworks records of the published training jobs (job, model and dataset metadata) are in
 `records/fireworks/`, and every new training run saves its own in `evaluation/reruns/training/`; the
@@ -173,8 +173,8 @@ and a few answers side by side.
 
 ```bash
 make upload-datasets          # training data -> Fireworks
-make train-models             # fine-tune Qwen3-4B (Amazon ~10 min, Banking77 ~2.5 h)
-make deploy-models            # base model + fine-tuned models on Fireworks (scale to zero when idle)
+make train-models             # fine-tune Qwen3-4B (Amazon ~20 min, Banking77 ~1.5 h)
+make deploy-models            # one Fireworks deployment per model: base + each fine-tuned (scale to zero when idle)
 make exec-benchmark           # base vs fine-tuned vs GPT-5 (+ blind judge for Amazon)
 make undeploy                 # delete the Fireworks deployments
 ```

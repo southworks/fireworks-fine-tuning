@@ -45,13 +45,14 @@ system message differs.
 | `jwbjh5ed` | `ft-qwen3-4b-banking` | `banking77` (9,002) | — | 3 | 1e-4 | 8 | 8 | 2 h 07 m | USD 0.77 |
 | `n3gtjgd9` | `ft-qwen3-4b-banking-validation` | `banking77` (9,002) | `banking77-validation` | 3 | 1e-4 | 8 | 8 | 2 h 25 m | USD 0.77 |
 
-Both use Qwen3-4B and the files in `data/banking77/`, the same recipe as `configs/training/banking77.toml`.
+Both use Qwen3-4B and the files in `data/banking77/`.
 The Banking77 results reported in this repository come from a separate local experiment; see
 `evaluation/banking77/README.md`.
 
 ## Reproducing a job
 
-`configs/training/amazon-reviews.toml` and `configs/training/banking77.toml` hold exactly these recipes
+`configs/training/amazon-reviews.toml` and `configs/training/banking77.toml` use the same base model,
+LoRA rank, learning rate, batch size and context length as these jobs, with 2 epochs for both use cases,
 under new, fixed names (`ft-qwen3-4b-amazon-reviews`, `ft-qwen3-4b-banking77`), so a re-run can never
 overwrite the published models. `make upload-datasets train-models` runs them
 (`make train-models DRY_RUN=1` prints the `firectl sftj create` commands first); when a job finishes, its

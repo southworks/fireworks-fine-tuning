@@ -1,0 +1,9 @@
+# Fine-tuned Qwen3-4B for Banking77 (intent classification), on its own deployment.
+# Used by: make deploy-ft-model-banking77  ->  scripts/fireworks/deploy_model.py
+name                 = "qwen3-4b-banking77"              # deployment ID
+model                = "ft-qwen3-4b-banking77"           # trained by make train-model-banking77
+shape                = "default"                         # or a shape from: firectl deployment-shape-version match --model <model>
+min_replicas         = 0                                 # 0 = scale to zero when idle
+max_replicas         = 1
+scale_to_zero_window = "10m"                             # idle time before scaling to zero (Fireworks default 1h)
+display_name         = "Qwen3-4B fine-tuned - Banking77 (intent classification)"

@@ -663,7 +663,7 @@ def process_slot(
 
 
 def write_review(path: Path, rows: list[dict]) -> None:
-    lines = ["# Validated three-model SFT pilot", ""]
+    lines = ["# Three-model SFT generation review", ""]
     for row in rows:
         example = row["example"]
         meta = example["metadata"]

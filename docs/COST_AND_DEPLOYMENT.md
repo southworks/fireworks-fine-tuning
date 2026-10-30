@@ -1,7 +1,7 @@
 # Cost and deployment
 
 Measured values come from the recorded jobs and benchmark runs. Prices are list-price inputs (October 2026);
-for a specific engagement, plug in the current Fireworks and Microsoft Foundry quotes.
+replace them with current Fireworks and Microsoft Foundry prices to apply the same calculation to another workload.
 
 ## Fixed cost: fine-tuning (measured)
 
@@ -36,13 +36,13 @@ GPT-5's cost is dominated by hidden reasoning tokens; the fine-tuned model produ
 
 ## Serving the fine-tuned model on Fireworks
 
-LoRA adapters run on **on-demand (dedicated) deployments** billed per GPU-second; serverless is not
-available for fine-tuned adapters. Options:
+Fine-tuned LoRA models run on **on-demand (dedicated) deployments** billed per GPU-second; serverless is
+not available for them. The pipeline gives each model its own deployment: the baseline and each fine-tuned
+model. Options:
 
-- One GPU with the base model and several adapters loaded as add-ons (multi-LoRA). This is how the demo
-  deploys: base, Amazon adapter and Banking77 adapter share one deployment.
-- Scale to zero (`--min-replica-count 0`): no GPU charge while idle after one hour, at the price of a
-  cold start (HTTP 503 until a replica is up).
+- Scale to zero (`--min-replica-count 0`): no GPU charge once the deployment has been idle for the
+  scale-to-zero window (10 minutes in this repository's configs; Fireworks default 1 hour), at the price
+  of a cold start (HTTP 503 until a replica is up).
 - Fixed replicas for steady traffic and predictable latency.
 
 ## Break-even against an API model
@@ -54,25 +54,25 @@ requests per hour  >  GPU price per hour ÷ API cost per request
 ```
 
 provided one GPU can serve that rate; a 4B model on a single H200 or B200 is sized for well above these
-volumes, and the pilot measures the exact figure for the client's traffic profile.
+volumes.
 
 | GPU price assumption | vs GPT-5 (USD 0.0266/request) | vs GPT-4.1 mini (USD 0.0012/request) |
 |---|---:|---:|
 | USD 7 / h | ~263 requests/h | ~5,900 requests/h |
-| USD 8 / h (H200, partnership deck, Oct 2026) | ~300 requests/h | ~6,700 requests/h |
-| USD 13 / h (B200, partnership deck, Oct 2026) | ~489 requests/h | ~10,900 requests/h |
+| USD 8 / h (H200 list price, Oct 2026) | ~300 requests/h | ~6,700 requests/h |
+| USD 13 / h (B200 list price, Oct 2026) | ~489 requests/h | ~10,900 requests/h |
 
 Reading: against a reasoning model like GPT-5, a dedicated small model pays off at modest steady volume.
 Against a cheap non-reasoning model like GPT-4.1 mini, the argument is mainly quality (+10.7 points of
-accuracy) and latency, not cost, unless volume is high or the GPU is shared across several adapters.
+accuracy) and latency, not cost, unless volume is high.
 
 For bursty or low traffic, scale-to-zero changes the calculation to *active GPU hours* rather than 730 h
 per month; e.g. 8 active hours per business day ≈ 176 h/month.
 
-## What to measure in a client pilot
+## Inputs that drive the cost of a workload
 
 - Requests per month, peak requests per second, mean input/output tokens.
 - Sustained throughput and p95 latency of the fine-tuned model on the chosen deployment shape.
-- Current price quotes for the GPU and for the API model being replaced, with date.
-- Cold-start time if scale-to-zero is used.
+- Current prices of the GPU and of the API model it replaces.
+- Cold-start time when scale-to-zero is used.
 - Data preparation and review effort (usually the largest fixed cost).

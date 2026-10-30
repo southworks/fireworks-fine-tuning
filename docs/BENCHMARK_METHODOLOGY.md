@@ -22,7 +22,7 @@ The small `BUY` support makes class-specific estimates unstable.
 | System | Served by | Generation settings |
 |---|---|---|
 | Qwen3-4B base | Fireworks dedicated deployment | temperature 0, top_p 1, max 500 tokens, `reasoning_effort=none` |
-| Qwen3-4B Amazon v2 fine-tuned (LoRA) | Fireworks, LoRA add-on on a dedicated deployment | same as base |
+| Qwen3-4B Amazon v2 fine-tuned (LoRA) | Fireworks dedicated deployment of the fine-tuned model | same as base |
 | GPT-4.1 mini | Microsoft Foundry, Responses API | max 500 output tokens |
 | GPT-5 | Microsoft Foundry, Responses API | no temperature (rejected by the deployment), max 8,000 output tokens (includes reasoning) |
 

@@ -53,12 +53,12 @@ Historical Fireworks jobs on this data (records in `records/fireworks/`):
 | `jwbjh5ed` | `ft-qwen3-4b-banking` | Qwen3-4B | 3 | 1e-4 | 8 | 8 | 2 h 07 m | USD 0.77 |
 | `n3gtjgd9` | `ft-qwen3-4b-banking-validation` | Qwen3-4B | 3 | 1e-4 | 8 | 8 | 2 h 25 m | USD 0.77 |
 
-`configs/training/banking77.toml` uses the same recipe; the pipeline below trains and benchmarks it.
+`configs/training/banking77.toml` uses the same settings with 2 epochs; the pipeline below trains and benchmarks it.
 
 ```bash
 make upload-dataset-banking77               # banking77-train + banking77-eval
 make train-model-banking77 DRY_RUN=1        # inspect the firectl request
-make train-model-banking77                  # same recipe as n3gtjgd9 (~2-2.5 h); waits for the job
+make train-model-banking77                  # ~1.5 h; waits for the job
 make deploy-base-model deploy-ft-model-banking77
 make exec-benchmark-banking77 LIMIT=200     # base and GPT-5 get the 77-label list in the prompt;
                                             # the fine-tuned model gets its plain training instruction

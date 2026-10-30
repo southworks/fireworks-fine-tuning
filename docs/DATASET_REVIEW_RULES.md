@@ -16,11 +16,7 @@ Each response must provide a useful, concise purchase recommendation supported e
   - reported risks, limitations, and problems.
 - Do not generate `use_cases` or suggest alternative uses. The objective is to evaluate the requested purchase, not broaden the product's purpose.
 - All reviews, variants, and derived data for the same `parent_asin` must belong to a single split.
-- The initial split is:
-  - training: 4,000 products;
-  - evaluation: 500 products;
-  - test: 500 products.
-- Assign splits by product before generating responses. No product, variant, review, or derived evidence from evaluation or test may appear in training.
+- Assign each product to exactly one split (training or evaluation) before generating responses. No product, variant, review, or derived evidence from evaluation may appear in training.
 
 ## 2. Context selection
 

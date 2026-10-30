@@ -12,7 +12,6 @@
 # already exist in your Microsoft Foundry resource; their names go in .env.
 
 PY    ?= python3
-FT_DEPLOY  := configs/deployment/qwen3-4b-ft-adapters.toml
 FLAGS := $(if $(FORCE),--force) $(if $(DRY_RUN),--dry-run)
 BENCH := $(if $(LIMIT),--limit $(LIMIT)) $(if $(DRY_RUN),--dry-run)
 
@@ -45,10 +44,10 @@ upload-dataset-banking77:                ## Banking77 training and evaluation se
 
 train-models: train-model-amazon-reviews train-model-banking77  ## fine-tune all models
 
-train-model-amazon-reviews:              ## fine-tune Qwen3-4B on Amazon reviews (~10 min)
+train-model-amazon-reviews:              ## fine-tune Qwen3-4B on Amazon reviews (~20 min)
 	$(PY) scripts/fireworks/train_model.py --config configs/training/amazon-reviews.toml $(FLAGS)
 
-train-model-banking77:                   ## fine-tune Qwen3-4B on Banking77 (~2-2.5 h)
+train-model-banking77:                   ## fine-tune Qwen3-4B on Banking77 (~1.5 h)
 	$(PY) scripts/fireworks/train_model.py --config configs/training/banking77.toml $(FLAGS)
 
 deploy-models: deploy-base-model deploy-ft-models  ## deploy the baseline and the fine-tuned models
@@ -56,13 +55,13 @@ deploy-models: deploy-base-model deploy-ft-models  ## deploy the baseline and th
 deploy-base-model:                       ## Qwen3-4B base (benchmark baseline)
 	$(PY) scripts/fireworks/deploy_model.py --config configs/deployment/qwen3-4b-base.toml $(FLAGS)
 
-deploy-ft-models: deploy-ft-model-amazon-reviews deploy-ft-model-banking77  ## both fine-tuned models, sharing one GPU (multi-LoRA)
+deploy-ft-models: deploy-ft-model-amazon-reviews deploy-ft-model-banking77  ## both fine-tuned models, one deployment each
 
-deploy-ft-model-amazon-reviews:          ## fine-tuned Amazon reviews model (creates or reuses the shared deployment)
-	$(PY) scripts/fireworks/deploy_model.py --config $(FT_DEPLOY) --adapter ft-qwen3-4b-amazon-reviews $(FLAGS)
+deploy-ft-model-amazon-reviews:          ## fine-tuned Amazon reviews model
+	$(PY) scripts/fireworks/deploy_model.py --config configs/deployment/qwen3-4b-amazon-reviews.toml $(FLAGS)
 
-deploy-ft-model-banking77:               ## fine-tuned Banking77 model (creates or reuses the shared deployment)
-	$(PY) scripts/fireworks/deploy_model.py --config $(FT_DEPLOY) --adapter ft-qwen3-4b-banking77 $(FLAGS)
+deploy-ft-model-banking77:               ## fine-tuned Banking77 model
+	$(PY) scripts/fireworks/deploy_model.py --config configs/deployment/qwen3-4b-banking77.toml $(FLAGS)
 
 exec-benchmark: exec-benchmark-amazon-reviews exec-benchmark-banking77  ## run all benchmarks
 

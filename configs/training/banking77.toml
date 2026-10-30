@@ -1,4 +1,4 @@
-# Banking77 intent classificationß
+# Banking77 intent classification
 name               = "ft-qwen3-4b-banking77"
 base_model         = "accounts/fireworks/models/qwen3-4b"
 dataset            = "banking77-train"

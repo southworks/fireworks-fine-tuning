@@ -319,7 +319,7 @@ def main() -> int:
             payload = {"messages": example["messages"]} if status == "approved" else example
             destination.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
-    review_lines = ["# Single-pass 50-example pilot", ""]
+    review_lines = ["# Single-pass generation review", ""]
     for example in examples:
         meta, judge = example["metadata"], example["metadata"]["judge"]
         review_lines.extend([

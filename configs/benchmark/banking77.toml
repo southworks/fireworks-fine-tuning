@@ -16,7 +16,7 @@ max_tokens = 20
 label      = "qwen3_4b_finetuned"
 provider   = "fireworks"
 model      = "ft-qwen3-4b-banking77"
-deployment = "qwen3-4b-ft-adapters"
+deployment = "qwen3-4b-banking77"
 max_tokens = 20
 
 [[models]]

@@ -1,0 +1,9 @@
+# Fine-tuned Qwen3-4B for Amazon reviews (purchasing copilot), on its own deployment.
+# Used by: make deploy-ft-model-amazon-reviews  ->  scripts/fireworks/deploy_model.py
+name                 = "qwen3-4b-amazon-reviews"         # deployment ID
+model                = "ft-qwen3-4b-amazon-reviews"      # trained by make train-model-amazon-reviews
+shape                = "default"                         # or a shape from: firectl deployment-shape-version match --model <model>
+min_replicas         = 0                                 # 0 = scale to zero when idle
+max_replicas         = 1
+scale_to_zero_window = "10m"                             # idle time before scaling to zero (Fireworks default 1h)
+display_name         = "Qwen3-4B fine-tuned - Amazon reviews (purchasing copilot)"
