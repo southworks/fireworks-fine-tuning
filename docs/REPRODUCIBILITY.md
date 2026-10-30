@@ -46,7 +46,6 @@ overwritten by a re-run. Foundry deployments are reused when they exist (pay-per
 |---|---|---|
 | `qwen3-4b-base` | `dedicated` | Qwen3-4B without fine-tuning (baseline) |
 | `qwen3-4b-ft-adapters` | `addons` | `ft-qwen3-4b-amazon-reviews` and `ft-qwen3-4b-banking77` on one GPU (multi-LoRA); `deploy-ft-model-<case>` loads one adapter, creating the deployment if needed |
-| `qwen3-4b-ft-published` | `addons` | the published `ft-qwen3-4b-amazon-v2` and `ft-qwen3-4b-banking-validation` (`deploy-published-model-<case>`) |
 
 All scale to zero after 10 idle minutes (`scale_to_zero_window`). Multi-LoRA (`addons`) is created through
 firectl (`deployment create --enable-addons` + `model load-lora`); the Fireworks web UI does not offer it.

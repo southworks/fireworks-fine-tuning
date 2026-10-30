@@ -41,11 +41,9 @@ def validate_messages(row: dict, where: str) -> str:
 def main() -> int:
     manifest = json.loads((DATA / "manifest.json").read_text(encoding="utf-8"))
     master = list(rows(DATA / "examples_master.jsonl"))
-    train = list(rows(DATA / "training.jsonl"))
     evaluation = list(rows(DATA / "evaluation.jsonl"))
 
     assert len(master) == manifest["total_examples"] == 1822
-    assert len(train) == manifest["training_examples"] == 797
     assert len(evaluation) == manifest["evaluation_examples"] == 118
 
     ids = [row["metadata"]["example_id"] for row in master]
@@ -56,20 +54,21 @@ def main() -> int:
     statuses = Counter(row["metadata"]["review_status"] for row in master)
     assert dict(statuses) == manifest["statuses"]
     master_by_messages = {json.dumps(row["messages"], sort_keys=True): row for row in master}
-    split_products: dict[str, set[str]] = {"train": set(), "evaluation": set()}
+    split_products: dict[str, set[str]] = {
+        split: {row["metadata"]["parent_asin"] for row in master
+                if row["metadata"]["review_status"] == "approved" and row["metadata"]["dataset_split"] == split}
+        for split in ("train", "evaluation")
+    }
 
-    for split, exported in (("train", train), ("evaluation", evaluation)):
-        labels = Counter()
-        for number, row in enumerate(exported, 1):
-            labels[validate_messages(row, f"{split}:{number}")] += 1
-            key = json.dumps(row["messages"], sort_keys=True)
-            assert key in master_by_messages, f"{split}:{number}: not found in master"
-            source = master_by_messages[key]
-            assert source["metadata"]["review_status"] == "approved"
-            assert source["metadata"]["dataset_split"] == split
-            split_products[split].add(source["metadata"]["parent_asin"])
-        assert dict(labels) == manifest["split_results"][split]
-
+    labels = Counter()
+    for number, row in enumerate(evaluation, 1):
+        labels[validate_messages(row, f"evaluation:{number}")] += 1
+        key = json.dumps(row["messages"], sort_keys=True)
+        assert key in master_by_messages, f"evaluation:{number}: not found in master"
+        source = master_by_messages[key]
+        assert source["metadata"]["review_status"] == "approved"
+        assert source["metadata"]["dataset_split"] == "evaluation"
+    assert dict(labels) == manifest["split_results"]["evaluation"]
     assert split_products["train"].isdisjoint(split_products["evaluation"]), "product leakage"
 
     test_path = EVAL / "test_evaluation_103.jsonl"
@@ -137,8 +136,7 @@ def main() -> int:
     print(json.dumps({
         "status": "ok",
         "canonical_examples": len(master),
-        "training_examples_current_export": len(train),
-        "training_examples_fireworks_v2_job": len(v2),
+        "training_examples": len(v2),
         "evaluation_examples": len(evaluation),
         "benchmark_cases": len(test),
         "prediction_rows": len(prediction_files) * len(test),

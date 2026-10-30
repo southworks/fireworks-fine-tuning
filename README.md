@@ -193,10 +193,6 @@ make deploy-base-model deploy-ft-model-banking77 exec-benchmark-banking77 undepl
 `make help` lists every target. New results are written to `evaluation/reruns/`, next to (never over)
 the published ones.
 
-> Want to benchmark the exact models behind the published results without training?
-> `make deploy-base-model deploy-published-models exec-benchmark-published`
-> (or per case, e.g. `deploy-published-model-banking77 exec-benchmark-published-banking77`).
-
 ---
 
 ## How the repository works

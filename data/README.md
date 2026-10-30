@@ -1,6 +1,6 @@
 # Published data
 
-`dataset/` contains the canonical derived SFT data for the Amazon case. `examples_master.jsonl` is the source of truth; `training.jsonl` and `evaluation.jsonl` are approved, messages-only exports. `fireworks_v2_training.jsonl` is the exact 731-row file the published `ft-qwen3-4b-amazon-v2` model was trained on (see docs/DATASET.md).
+`dataset/` contains the canonical derived SFT data for the Amazon case. `examples_master.jsonl` is the source of truth (every generated example with its audit metadata). `fireworks_v2_training.jsonl` is the training file of `ft-qwen3-4b-amazon-v2` (731 approved examples) and the one the pipeline uploads; `evaluation.jsonl` is the approved evaluation export the 103 benchmark cases come from (see docs/DATASET.md).
 
 `banking77/` contains the Banking77 splits in chat format (see `banking77/README.md`).
 

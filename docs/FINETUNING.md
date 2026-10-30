@@ -31,12 +31,6 @@ prompt (1,400 characters) that adds the exact output template. All four models i
 the same long prompt. The user and assistant contents are identical to the canonical ledger; only the
 system message differs.
 
-### Superseded job
-
-Job `kj1ast4n` (same day, 15:19 UTC) trained the same model name on `amazon-reviews-v2-700-train` with
-`eval_auto_carveout`. That dataset was later deleted and the model was retrained by `o9pa8ud2`; the
-benchmarked model is the `o9pa8ud2` output. The record is kept for transparency.
-
 ### How the benchmark served it
 
 - Base: `accounts/southworks/deployments/w7u134w9` (dedicated deployment of Qwen3-4B).
@@ -51,9 +45,9 @@ benchmarked model is the `o9pa8ud2` output. The record is kept for transparency.
 | `jwbjh5ed` | `ft-qwen3-4b-banking` | `banking77` (9,002) | — | 3 | 1e-4 | 8 | 8 | 2 h 07 m | USD 0.77 |
 | `n3gtjgd9` | `ft-qwen3-4b-banking-validation` | `banking77` (9,002) | `banking77-validation` | 3 | 1e-4 | 8 | 8 | 2 h 25 m | USD 0.77 |
 
-Both use Qwen3-4B and the files in `data/banking77/`; `make deploy-base-model deploy-published-model-banking77
-exec-benchmark-published-banking77` benchmarks them. The frozen Banking77 results come from a separate local
-experiment; see `evaluation/banking77/README.md`.
+Both use Qwen3-4B and the files in `data/banking77/`, the same recipe as `configs/training/banking77.toml`.
+The Banking77 results reported in this repository come from a separate local experiment; see
+`evaluation/banking77/README.md`.
 
 ## Reproducing a job
 

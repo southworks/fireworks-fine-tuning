@@ -12,7 +12,6 @@
 
 PY    ?= python3
 FT_DEPLOY  := configs/deployment/qwen3-4b-ft-adapters.toml
-PUB_DEPLOY := configs/deployment/qwen3-4b-ft-published.toml
 FLAGS := $(if $(FORCE),--force) $(if $(DRY_RUN),--dry-run)
 BENCH := $(if $(LIMIT),--limit $(LIMIT)) $(if $(DRY_RUN),--dry-run)
 
@@ -21,9 +20,7 @@ BENCH := $(if $(LIMIT),--limit $(LIMIT)) $(if $(DRY_RUN),--dry-run)
         upload-datasets upload-dataset-amazon-reviews upload-dataset-banking77 \
         train-models train-model-amazon-reviews train-model-banking77 \
         deploy-models deploy-base-model deploy-ft-models deploy-ft-model-amazon-reviews deploy-ft-model-banking77 \
-        deploy-published-models deploy-published-model-amazon-reviews deploy-published-model-banking77 \
         exec-benchmark exec-benchmark-amazon-reviews exec-benchmark-banking77 \
-        exec-benchmark-published exec-benchmark-published-amazon-reviews exec-benchmark-published-banking77 \
         undeploy
 
 help:                                    ## list the processes
@@ -70,14 +67,6 @@ deploy-ft-model-amazon-reviews:          ## fine-tuned Amazon reviews model (cre
 deploy-ft-model-banking77:               ## fine-tuned Banking77 model (creates or reuses the shared deployment)
 	$(PY) scripts/deploy_model.py --config $(FT_DEPLOY) --adapter ft-qwen3-4b-banking77 $(FLAGS)
 
-deploy-published-models: deploy-published-model-amazon-reviews deploy-published-model-banking77  ## the fine-tuned models behind the published results
-
-deploy-published-model-amazon-reviews:   ## published Amazon reviews model (ft-qwen3-4b-amazon-v2)
-	$(PY) scripts/deploy_model.py --config $(PUB_DEPLOY) --adapter ft-qwen3-4b-amazon-v2 $(FLAGS)
-
-deploy-published-model-banking77:        ## published Banking77 model (ft-qwen3-4b-banking-validation)
-	$(PY) scripts/deploy_model.py --config $(PUB_DEPLOY) --adapter ft-qwen3-4b-banking-validation $(FLAGS)
-
 exec-benchmark: exec-benchmark-amazon-reviews exec-benchmark-banking77  ## run all benchmarks
 
 exec-benchmark-amazon-reviews:           ## base vs fine-tuned vs GPT-5 + blind judge (103 cases)
@@ -85,14 +74,6 @@ exec-benchmark-amazon-reviews:           ## base vs fine-tuned vs GPT-5 + blind 
 
 exec-benchmark-banking77:                ## base vs fine-tuned vs GPT-5 (3,080 cases)
 	$(PY) scripts/run_benchmark.py --config configs/benchmark/banking77.toml $(BENCH)
-
-exec-benchmark-published: exec-benchmark-published-amazon-reviews exec-benchmark-published-banking77  ## same benchmarks with the published models
-
-exec-benchmark-published-amazon-reviews: ## Amazon reviews benchmark with ft-qwen3-4b-amazon-v2
-	$(PY) scripts/run_benchmark.py --config configs/benchmark/amazon-reviews-published.toml $(BENCH)
-
-exec-benchmark-published-banking77:      ## Banking77 benchmark with ft-qwen3-4b-banking-validation
-	$(PY) scripts/run_benchmark.py --config configs/benchmark/banking77-published.toml $(BENCH)
 
 undeploy:                                ## delete every Fireworks deployment in configs/deployment (stops GPU billing)
 	$(PY) scripts/undeploy_model.py --all $(if $(DRY_RUN),--dry-run)

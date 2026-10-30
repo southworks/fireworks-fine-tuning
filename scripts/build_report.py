@@ -80,7 +80,7 @@ def build(folder: Path) -> str:
         dist = m["prediction_distribution"]
         lines.append(f"| {display_name(model)} | {pct(m['accuracy'])} | {m['macro_f1']:.4f} | {m['weighted_f1']:.4f} | "
                      f"{o.get('token_f1', 0):.4f} | {o.get('rouge_l_f1', 0):.4f} | " + " | ".join(str(dist.get(l, 0)) for l in LABELS) + " |")
-    lines.append(f"| Reference | | | | | | " + " | ".join(str(ref.get(l, 0)) for l in LABELS) + " |")
+    lines.append("| Reference | | | | | | " + " | ".join(str(ref.get(l, 0)) for l in LABELS) + " |")
 
     lines += ["", "## 2. Per-class F1", "", "| Model | " + " | ".join(f"`{l}`" for l in LABELS) + " |", "|---|" + "---:|" * len(LABELS)]
     for model, m in models:

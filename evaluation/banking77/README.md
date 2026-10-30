@@ -44,7 +44,7 @@ Reading:
 
 Data (`data/banking77/`): `train.jsonl` 9,002 · `validation.jsonl` 1,001 · `test.jsonl` 3,080, chat format
 (system instruction, customer query, intent label). Validation is a stratified 10% split of the original
-training set (seed 42; see `scripts/banking77_prepare_from_csv.py`, which needs pandas and scikit-learn).
+training set (seed 42).
 
 Historical Fireworks jobs on this data (records in `records/fireworks/`):
 
@@ -53,7 +53,7 @@ Historical Fireworks jobs on this data (records in `records/fireworks/`):
 | `jwbjh5ed` | `ft-qwen3-4b-banking` | Qwen3-4B | 3 | 1e-4 | 8 | 8 | 2 h 07 m | USD 0.77 |
 | `n3gtjgd9` | `ft-qwen3-4b-banking-validation` | Qwen3-4B | 3 | 1e-4 | 8 | 8 | 2 h 25 m | USD 0.77 |
 
-`make deploy-base-model deploy-published-model-banking77 exec-benchmark-published-banking77` benchmarks these models.
+`configs/training/banking77.toml` uses the same recipe; the pipeline below trains and benchmarks it.
 
 ```bash
 make deploy-foundry-models                  # GPT-5 in Foundry
