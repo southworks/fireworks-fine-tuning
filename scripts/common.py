@@ -145,8 +145,8 @@ def run(command: list[str], dry_run: bool = False, capture: bool = False, check:
         return subprocess.CompletedProcess(command, 0, "", "")
     if not shutil.which(command[0]):
         fail(f"{command[0]} not found. " + {
-            "firectl": "Install: brew tap fw-ai/firectl && brew install firectl",
-            "az": "Install: brew install azure-cli, then az login",
+            "firectl": "Install it: https://docs.fireworks.ai/tools-sdks/firectl/firectl",
+            "az": "Install it (https://learn.microsoft.com/cli/azure/install-azure-cli), then run az login",
         }.get(command[0], ""))
     result = subprocess.run(command, text=True, capture_output=capture)
     if check and result.returncode:

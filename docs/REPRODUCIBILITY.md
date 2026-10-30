@@ -24,7 +24,7 @@ Each process is one script with explicit inputs; the Makefile only names them.
 | Foundry models | `python3 scripts/deploy_foundry.py --config configs/foundry/models.toml` | `AZ_RESOURCE_GROUP`, `AZ_FOUNDRY_ACCOUNT`; `az login` |
 | Upload a dataset | `python3 scripts/upload_dataset.py --name <id> --path <jsonl>` | `FIREWORKS_API_KEY` or `firectl signin` |
 | Train | `python3 scripts/train_model.py --config configs/training/<x>.toml` | dataset uploaded |
-| Deploy | `python3 scripts/deploy_model.py --config configs/deployment/<x>.toml` | model trained |
+| Deploy | `python3 scripts/deploy_model.py --config configs/deployment/<x>.toml [--adapter <model>]` | model trained |
 | Benchmark | `python3 scripts/run_benchmark.py --config configs/benchmark/<x>.toml [--limit N]` | deployments up; `FOUNDRY_BASE_URL`, `FOUNDRY_API_KEY` |
 | Undeploy | `python3 scripts/undeploy_model.py --all` or `--config <x>` | — |
 
@@ -34,7 +34,8 @@ existing Fireworks resource with the same name and recreates it. Through make: `
 ### Names
 
 Names are fixed in the configs and used as Fireworks IDs: dataset IDs, job ID = output model name, and
-deployment ID = deployment `name`. A second run with the same name stops with an error; `FORCE=1` replaces the
+deployment ID = deployment `name`. A second run with the same name stops with an error (add-on deployments are the exception: they are reused
+so each use case can load its adapter); `FORCE=1` replaces the
 resource (a model that is still deployed must be undeployed first). Deleting in Fireworks cannot be undone.
 The training configs use names different from the published models, so the evidence models cannot be
 overwritten by a re-run. Foundry deployments are reused when they exist (pay-per-token, nothing to reset).
@@ -44,8 +45,8 @@ overwritten by a re-run. Foundry deployments are reused when they exist (pay-per
 | Config | Strategy | Serves |
 |---|---|---|
 | `qwen3-4b-base` | `dedicated` | Qwen3-4B without fine-tuning (baseline) |
-| `qwen3-4b-ft-adapters` | `addons` | `ft-qwen3-4b-amazon-reviews` and `ft-qwen3-4b-banking77` on one GPU (multi-LoRA) |
-| `qwen3-4b-ft-published` | `addons` | the published `ft-qwen3-4b-amazon-v2` and `ft-qwen3-4b-banking-validation` |
+| `qwen3-4b-ft-adapters` | `addons` | `ft-qwen3-4b-amazon-reviews` and `ft-qwen3-4b-banking77` on one GPU (multi-LoRA); `deploy-ft-model-<case>` loads one adapter, creating the deployment if needed |
+| `qwen3-4b-ft-published` | `addons` | the published `ft-qwen3-4b-amazon-v2` and `ft-qwen3-4b-banking-validation` (`deploy-published-model-<case>`) |
 
 All scale to zero after 10 idle minutes (`scale_to_zero_window`). Multi-LoRA (`addons`) is created through
 firectl (`deployment create --enable-addons` + `model load-lora`); the Fireworks web UI does not offer it.

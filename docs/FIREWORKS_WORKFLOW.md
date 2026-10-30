@@ -15,7 +15,7 @@ Reference: [firectl](https://docs.fireworks.ai/tools-sdks/firectl/firectl) ·
 ## 0. Install and authenticate
 
 ```bash
-brew tap fw-ai/firectl && brew install firectl
+# install firectl for your OS: https://docs.fireworks.ai/tools-sdks/firectl/firectl
 firectl signin                 # or FIREWORKS_API_KEY in .env (the scripts pass it without printing it)
 firectl whoami
 firectl model get -a fireworks qwen3-4b      # "tunable": true
@@ -54,7 +54,7 @@ Other useful `sftj create` options: `--warm-start-from <model>` (continue from a
 `--source-job <job>` (copy a job's configuration), `--wandb ...` (training curves). The job page in the
 console shows the loss curve and "Render Samples" (tokens and loss mask).
 
-## 3. Deploy — `make deploy-models` (config: `configs/deployment/*.toml`)
+## 3. Deploy — `make deploy-models`, or per case `deploy-base-model`, `deploy-ft-model-<case>` (config: `configs/deployment/*.toml`)
 
 Fine-tuned LoRA models are served only on **on-demand (dedicated) deployments**, billed per GPU-second.
 
@@ -63,7 +63,9 @@ Fine-tuned LoRA models are served only on **on-demand (dedicated) deployments**,
 firectl deployment create accounts/fireworks/models/qwen3-4b --deployment-id qwen3-4b-base \
   --deployment-shape default --min-replica-count 0 --max-replica-count 1 --scale-to-zero-window 10m --wait
 
-# fine-tuned models: both adapters on one GPU                    (strategy = "addons", multi-LoRA)
+# fine-tuned models: adapters on one GPU                         (strategy = "addons", multi-LoRA)
+# make deploy-ft-model-amazon-reviews creates the deployment and loads its adapter;
+# make deploy-ft-model-banking77 reuses the deployment and loads the second one.
 firectl deployment create accounts/fireworks/models/qwen3-4b --deployment-id qwen3-4b-ft-adapters \
   --deployment-shape default --min-replica-count 0 --max-replica-count 1 --scale-to-zero-window 10m --wait --enable-addons
 firectl model load-lora accounts/southworks/models/ft-qwen3-4b-amazon-reviews --deployment qwen3-4b-ft-adapters --wait

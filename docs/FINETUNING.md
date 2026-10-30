@@ -51,8 +51,8 @@ benchmarked model is the `o9pa8ud2` output. The record is kept for transparency.
 | `jwbjh5ed` | `ft-qwen3-4b-banking` | `banking77` (9,002) | — | 3 | 1e-4 | 8 | 8 | 2 h 07 m | USD 0.77 |
 | `n3gtjgd9` | `ft-qwen3-4b-banking-validation` | `banking77` (9,002) | `banking77-validation` | 3 | 1e-4 | 8 | 8 | 2 h 25 m | USD 0.77 |
 
-Both use Qwen3-4B and the files in `data/banking77/`; `make deploy-base-model deploy-published-models
-exec-benchmark-published` benchmarks them. The frozen Banking77 results come from a separate local
+Both use Qwen3-4B and the files in `data/banking77/`; `make deploy-base-model deploy-published-model-banking77
+exec-benchmark-published-banking77` benchmarks them. The frozen Banking77 results come from a separate local
 experiment; see `evaluation/banking77/README.md`.
 
 ## Reproducing a job
